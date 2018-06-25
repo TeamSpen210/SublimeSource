@@ -1,0 +1,98 @@
+%YAML 1.2
+---
+name: Editoritems
+file_extensions: [p2c]
+scope: source.valve.keyvalues.editoritems
+
+variables: 
+  lib_operator: '(?i:^$)'
+  lib_const: '(?i:true|false|2x2|4x4|angledpaneltype|autodrop|autorespawn|autotrigger|barriertype|bottomlevel|buttontype|buttontype|catapultspeed|ceiling|collide_antlines|collide_glass|collide_grating|collide_nothing|collide_physics|collide_solid|connection_standard|connectioncount|cubetype|desires_up|floor|handle_36_directions|handle_4_directions|handle_5_positions|handle_6_positions|handle_8_positions|handle_none|portalable|ramp_30_deg_open|ramp_45_deg_open|ramp_60_deg_open|ramp_90_deg_open|startdeployed|startenabled|startreversed|startup|timerdelay|timersound|toplevel|verticalalignment|wall|oscillate|traveldistance|speed|traveldirection|startingposition|startactive)'
+  lib_func: '(?i:activate|angledpanelanimation|brushcount|brushsidecount|cananchoronbarriers|cananchorongoo|center|collideagainst|collidetype|connectionpoints|deactivate|defaultvalue|desiredfacing|dimensions|dir|editor|embeddedvoxels|embedface|entitycount|exporting|grid|groupid|id|image|index|inputs|instances|invalidsurface|item|itemclass|itemdata|material|model|modelname|movementhandle|name|normal|occupiedvoxels|occupiesvoxel|offset|outputs|overlay|palette|point|pos|pos|pos1|pos2|position|priority|properties|rotation|signageoffset|solid|sound_created|sound_deleted|sound_editing_activate|sound_editing_deactivate|sounds|subpos1|subpos2|subtype|subtypeproperty|surface|targetname|texturename|tooltip|type|volume|voxel)'
+  lib_type: '(?i:itemturret|itemtbeam|itemtbeam|itemstairs|itemrailplatformextent|itemrailplatform|itempistonplatform|itempedestalbutton|itempanelflip|itempaintsplat|itempaintdropper|itemlightstrip|itemlightbridge|itemlaseremitter|itemgoo|itemexitdoor|itementrancedoor|itemcube|itemcoopexitdoor|itemcoopentrancedoor|itemcatapult|itembuttonfloor|itembarrierhazardextent|itembarrierhazard|itembarrierextent|itembarrier|itemangledpanel|itemcatapulttarget)'
+
+# Copy direct from keyvalues!!
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues
+      push: comment
+  comment:
+    - meta_scope: comment.line.keyvalues
+    - match: '\n'
+      pop: true
+
+  main:
+    - include: inc_comments
+
+    - match: '\"{{lib_operator}}\"'
+      scope: string.quoted.double.keyvalues keyword.operator.word 
+    - match: '\"{{lib_const}}\"'
+      scope: string.quoted.double.keyvalues support.constant 
+    - match: '\"{{lib_func}}\"'
+      scope: string.quoted.double.keyvalues support.function
+    - match: '\"{{lib_type}}\"'
+      scope: string.quoted.double.keyvalues storage.type
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues
+      push: string
+
+    - match: '{'
+      scope: punctuation.section.block.begin.keyvalues
+      push: braces
+    - match: '}'
+      scope: invalid.illegal.stray-brace-end
+
+    - match: '\['
+      scope: punctuation.section.brackets.begin.keyvalues
+      push: flag
+    - match: ']'
+      scope: invalid.illegal.stray-bracket-end.keyvalues
+
+    - match: '{{lib_operator}}'
+      scope: keyword.operator.word string.unquoted.keyvalues
+    - match: '{{lib_const}}'
+      scope: support.constant string.unquoted.keyvalues
+    - match: '{{lib_func}}'
+      scope: support.function string.unquoted.keyvalues
+    - match: '{{lib_type}}'
+      scope: storage.type string.unquoted.keyvalues
+
+    - match: '[^\[\]"{}/]+'
+      scope: string.unquoted.keyvalues
+
+  string:
+    - meta_scope: string.quoted.double.keyvalues
+    - match: \\.
+      scope: constant.character.escape.keyvalues
+    - match: '\b[+-]?([0-9]*[.])?[0-9]+\b'
+      scope: constant.numeric.float
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues 
+      pop: true 
+
+  braces:
+    - meta_scope: meta.block
+    - match: '}'
+      scope: punctuation.section.block.end.keyvalues
+      pop: true
+    - include: main
+
+  flag:
+    - meta_scope: meta.brackets
+    - match: '!'
+      scope: keyword.operator.logical
+      set: flag-no-inverse
+    - match: ']'
+      scope: punctuation.section.brackets.end.keyvalues
+      pop: true
+    - match: '[/{}]+'
+      scope: invalid.illegal.stray-char
+    - match: '[^!\]/]+'
+      scope: string.unquoted.keyvalues
+
+  flag-no-inverse:
+    - match: '!'
+      scope: invalid.illegal.stray-inverse
+    - include: flag

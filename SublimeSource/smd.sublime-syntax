@@ -1,0 +1,82 @@
+%YAML 1.2
+---
+name: Source Model Data
+file_extensions: [smd]
+scope: source.valve.smd
+
+variables:
+  float: '[+-]?([0-9]*[.])?[0-9]+'
+  num: '[0-9]+'
+  int: '-?[0-9]+'
+
+contexts:
+  inc_comment:
+    - match: '(//|#|;)'
+      scope: punctuation.definition.comment.qc
+      push: comment
+
+  main:
+    - include: inc_comment
+    - match: 'end'
+      scope: invalid.illegal.end_in_main
+    - match: 'version'
+      scope: keyword.other
+      push: 
+        - match: '\n'
+          pop: true
+        - match: '{{num}}'
+          scope: constant.numeric.int
+          pop: true
+        - include: invalid_other
+    - match: '\bnodes\b'
+      scope: keyword.other
+      push:
+        - match: '({{num}})\s*(?:(")([^"]*)(")|([a-zA-Z_0-9]+))\s*({{int}})'
+          captures:
+            1: constant.numeric.int
+            2: punctuation.definition.string.begin.bone
+            3: string.quoted.double.bone
+            4: punctuation.definition.string.end.bone
+            5: string.unquoted.bone
+            6: constant.numeric.int
+        - include: end_pop
+        - include: invalid_other
+    - match: '\bskeleton\b'
+      scope: keyword.other
+      push:
+        # time 379
+        - match: '(time)\s*({{num}})'
+          captures:
+            1: keyword.other
+            2: constant.numeric.int
+        # 1 int + 6 floats
+        - match: '({{num}})\s*(?:({{float}})\s*){6}'
+          scope: constant.numeric.float
+        - include: end_pop
+        - include: invalid_other
+    - match: '\btriangles\b'
+      scope: keyword.other
+      push:
+        - include: inc_comment
+        - match: '{{float}}'
+          scope: constant.numeric.float
+        - match: '[a-zA-Z0-9_/\\]+'
+          scope: string.unquoted
+        - include: end_pop
+        - include: invalid_other
+    - include: invalid_other
+
+  comment:
+    - meta_scope: comment.line.qc
+    - match: '\n'
+      pop: true
+
+  end_pop:
+    # - meta_scope: meta.block
+    - match: 'end'
+      scope: keyword.other
+      pop: true
+
+  invalid_other:
+    - match: '[^\s]'
+      scope: invalid.illegal

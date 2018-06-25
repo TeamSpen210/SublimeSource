@@ -1,0 +1,127 @@
+%YAML 1.2
+---
+name: Valve Material Format
+file_extensions: [vmt]
+scope: source.valve.keyvalues.vmt
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues
+      push: comment
+  comment:
+    - meta_scope: comment.line.keyvalues
+    - match: '\n'
+      pop: true
+
+  # The shader name first!
+  main:
+    - include: inc_comments
+    - match: '[a-zA-Z_]+'
+      scope: entity.name.class.vmt.shader
+      push: expect-start-brace
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues
+      push: shader-name
+
+  shader-name:
+    - meta_scope: entity.name.class.vmt.shader
+    - match: '"'
+      set: expect-start-brace
+
+
+  # After the shader name, the first brace must be present.
+  expect-start-brace:
+    - include: inc_comments
+    - match: '{'
+      scope: punctuation.section.block.begin.vmt
+      set: shader-params
+    - match: '\w'
+      scope: invalid.illegal.stray-char
+      set:
+        - meta_scope: invalid.illegal.stray-char
+
+  # Actual main content.
+  shader-params:
+    - include: inc_comments
+    - meta_scope: meta.block
+    - match: '}'
+      scope: punctuation.section.block.end.vmt
+      set: 
+        # End of doc, everything invalid.
+        - include: inc_comments
+        - match: '.'
+          scope: invalid.illegal.footer
+
+    - match: '[$%]'
+      scope: punctuation.definition.keyword
+      push: unquoted-key
+    - match: '[a-zA-Z_0-9]+'
+      scope: keyword.other.vmt.shader_key
+      push: pre_value
+    - match: '"'
+      scope: punctuation.definition.string.begin.vmt_key 
+      push: quoted-key
+    - match: '{'
+      scope: punctuation.section.block.begin.vmt
+      push: block
+    - match: '\S'
+      scope: invalid.illegal.other
+    
+  quoted-key:
+    - meta_scope: keyword.other.vmt.shader_key
+    - match: '"'
+      scope: punctuation.definition.string.end.vmt_key 
+      set: pre_value
+
+  unquoted-key:
+    - meta_scope: keyword.other.vmt.shader_key
+    - match: '\s'
+      set: pre_value
+
+  # $key <here> "value"
+  pre_value:
+    - meta_scope: vmt.pre_value
+    - match: '\n'
+      pop: true
+    - match: '[+-]?([0-9]*[.])?[0-9]+'
+      scope: constant.numeric.float
+      set: require-newline
+    # Must be a newline next.
+    - match: '"'
+      scope: punctuation.definition.string.begin.vmt-value
+      set: quoted-value
+    - match: '$'
+      scope: punctuation.definition.keyword
+      push: unquoted-value
+    - match: '[a-zA-Z_0-9]+'
+      scope: string.quoted.double.vmt-value
+    # Anything else should be quoted. So match a non-whitespace,
+    # then include anything after that (so text is also illegal).
+    - match: '\S.*'
+      scope: invalid.illegal.vmt.must-be-quoted
+
+  unquoted-value:
+    - meta_scope: string.unquoted.vmt-value
+    - match: '\s'
+      pop: true
+
+  quoted-value:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: '"'
+      scope: punctuation.definition.string.end.vmt-value 
+      pop: true
+
+  block:
+    - meta_scope: meta.block
+    - match: '}'
+      scope: punctuation.section.block.end.vmt
+      pop: true
+    - include: shader-params
+
+  require-newline:
+    - include: inc_comments
+    - match: '\n'
+      pop: true
+    - match: '\w'
+      scope: invalid.illegal.stray-char

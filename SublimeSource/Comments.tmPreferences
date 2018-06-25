@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Keyvalues Options</string>
+	<key>scope</key>
+	<string>source.valve.keyvalues, source.valve.forge-game-data</string>
+	<key>settings</key>
+	<dict>
+		<key>decreaseIndentPattern</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>^\s*}\s*$</string>
+			</dict>
+		</array>
+		<key>increaseIndentPattern</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>^\s[a-zA-Z_\-0-9]*$</string>
+			</dict>
+		</array>
+		<key>shellVariables</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>TM_COMMENT_START</string>
+				<key>value</key>
+				<string>// </string>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>

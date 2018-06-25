@@ -1,0 +1,173 @@
+%YAML 1.2
+---
+name: Forge Game Data
+file_extensions: [fgd]
+scope: source.valve.fgd
+
+variables:
+  kvtypes: '(?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void)'
+  helpertypes_arg: '(?i:animator|base|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)'
+  helpertypes_no_arg: '(?i:halfgridsnap)'
+  identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.fgd
+      push: comment
+  comment:
+    - meta_scope: comment.line.fgd
+    - match: '\n'
+      pop: true
+
+  inc_string:
+    - match: '"'
+      scope: punctuation.definition.string.begin.fgd
+      push: string
+  string:
+    - meta_scope: string.quoted.double.fgd
+    - match: \\.
+      scope: constant.character.escape.fgd
+    # End quote plus continuation line, must follow with another string.
+    - match: '(")\s*(\+)'
+      captures:
+        1: punctuation.definition.string.end.fgd
+        2: keyword.operator.arithmetic.fgd.concat
+      set: 
+        - match: '"'
+          scope: punctuation.definition.string.begin.fgd
+          set: string
+        - match: '\S.*'
+          scope: invalid.illegal.fgd.no-concat
+    - match: '"'
+      scope: punctuation.definition.string.end.fgd 
+      pop: true 
+
+  inc_float:
+    - match: '[+-]?([0-9]*[.])?[0-9]+'
+      scope: constant.numeric.float
+
+  main:
+    - include: inc_comments
+    # - match: '"'
+    #   scope: punctuation.definition.string.begin.fgd
+    #   push: string
+    - match: '(?i:(@)mapsize)'
+      captures: 
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.mapsize
+        2: keyword.other.fgd.mapsize
+
+    - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass)\b)'
+      captures: 
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.entity
+      push: entity-header
+
+  entity-header:
+    - meta_scope: meta.class.fgd
+    - include: inc_comments
+    - match: '='
+      scope: punctuation.separator
+      set: entity-name
+    - match: '\]'
+      scope: invalid.illegal.stray-close
+
+
+    # Helpers, optionally with args.
+    - match: '(base)(\()'
+      # Special case - base gets the reference types, so you 
+      # can jump to definition.
+      captures:
+        1: constant.language.fgd.helper
+        2: punctuation.section.parens.begin.fgd.helper
+      push: 
+        - match: '{{identifier}}'
+          scope: variable.function.fgd
+        - include: helper-args
+
+    - match: '({{helpertypes_arg}})(\()'
+      captures:
+        1: constant.language.fgd.helper
+        2: punctuation.section.parens.begin.fgd.helper
+      push: helper-args
+    - match: '{{helpertypes_no_arg}}\s'
+      scope: constant.language.fgd.helper
+    # Unknown helper.
+    - match: '({{identifier}})(\()'
+      captures:
+        1: variable.function.fgd.helper
+        2: punctuation.section.parens.begin.fgd.helper
+      push: helper-args
+    - match: '{{identifier}}\b'
+      scope: variable.function.fgd.helper
+
+  helper-args:
+    - meta_scope: meta.class.fgd
+    - match: '\)'
+      scope: punctuation.section.parens.begin.fgd.helper
+      pop: true
+    - match: ','
+      scope: punctuation.separator.sequence.fgd
+    - include: inc_float
+    - include: inc_string
+    - match: '{{identifier}}'
+      scope: string.unquoted.fgd
+
+
+  entity-name:
+    - meta_scope: meta.class.fgd
+    - include: inc_comments
+    - match: '{{identifier}}'
+      scope: entity.name.function.fgd meta.class.fgd.name 
+    - match: ':'
+      scope: punctuation.separator
+      set: 
+        - match: '"'
+          scope: punctuation.definition.string.begin.fgd
+          push: string
+        - match: \[
+          scope: punctuation.section.block.begin.fgd.entity
+          set: entity-body
+    - match: '\n'
+      pop: true
+
+  entity-body:
+    - meta_scope: meta.class.fgd meta.block.fgd.entity
+    - include: inc_comments
+    - match: "(input|output)"
+      scope: storage.type.fgd.io
+    - match: ({{identifier}})(\()({{kvtypes}})(\))
+      captures:
+        1: variable.other.member.fgd.keyvalue
+        2: punctuation.section.parens.begin.fgd
+        3: constant.language.fgd.type
+        4: punctuation.section.parens.end.fgd
+      push: keyvalue
+    - match: \]
+      scope: punctuation.section.block.end.fgd.entity
+      pop: true
+
+  # Keyvalue body, parameters.
+  keyvalue:
+    - include: inc_float
+    - include: inc_string
+    - match: ':'
+      scope: punctuation.separator.fgd.keyvalue-sep
+    - match: '\n'
+      pop: true    
+    - match: =
+      scope: punctuation.separator.fgd.choices
+      set:
+        - match: \[
+          scope: punctuation.section.block.begin.fgd.choices
+          set:
+            # Choices body.
+            - include: inc_float
+            - include: inc_string
+            - match: ':'
+              scope: punctuation.separator.fgd.choices
+            - match: \]
+              scope: punctuation.section.block.end.fgd.choices
+              pop: true
+        - match: '\S\.*'
+          scope: invalid.illegal.fgd.stray-char

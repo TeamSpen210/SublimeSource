@@ -1,0 +1,5 @@
+name: FGD Symbols
+scope: source.valve.forge-game-data meta.class.fgd
+settings:
+  showInSymbolList:
+    - value: 1

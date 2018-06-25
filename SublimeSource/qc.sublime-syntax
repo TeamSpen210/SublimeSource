@@ -1,0 +1,60 @@
+%YAML 1.2
+---
+name: QC
+file_extensions: [qc, qci]
+scope: source.valve.qc
+
+contexts:
+
+  main:
+    - match: '//'
+      scope: punctuation.definition.comment.qc
+      push: comment
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.qc
+      push: string
+
+    - match: '{'
+      scope: punctuation.section.block.begin.qc
+      push: braces
+    - match: '}'
+      scope: invalid.illegal.stray-brace-end
+
+    - match: '(?i:\$animation|\$body(group)?|\$collisionjoints|\$collisionmodel|\$include|\$model(name)?|\$popd|\$pushd|\$sequence|flexfile|replacemodel)\b'
+      scope: keyword.control
+
+    - match: '(\$)(?i:animatedfriction|automass|concave|concaveperjoint|damping|drag|inertia|jointcollide|jointconstrain|jointdamping|jointinertia|jointmassbias|jointmerge|jointrotdamping|jointskip|mass|masscenter|maxconvexpieces|noselfcollisions|rootbone|rotdamping|skiptransition|alwayscollapse|ambientboost|animblocksize|append|attachment|autocenter|bbox|bonemerge|bonesaveframe|cd(materials)?|centerbonesconverts|cmdlist|collapsebones|collisiontext|constantdirectionallight|contents|continue|controller|declareanimation|declaresequence|definebone|definemacro|definevariable|eyeposition|forcephonemecrossfade|hbox|hboxset|heirarchy|hgroup|hierarchy|ikautoplaylock|ikchain|illumposition|includemodel|jigglebone|jointcontents|jointsurfaceprop|keyvalues|limitrotation|lockbonelengths|lod|minlod|mostlyopaque|opaque|origin|poseparameter|poseparameter|proceduralbones|realignbones|renamebone|renamematerial|root|scale|sectionframes|shadowlod|staticprop|surfaceprop|testmacro|texturegroup|upaxis|weightlist|mass|concave|cbox)\b'
+      scope: keyword.other
+
+    - match: '(\$)([a-zA-Z_]+)'
+      captures:
+        1: keyword.other
+        2: invalid.keyword
+
+    - match: 'AE_CL_PLAYSOUND|AE_CL_STOPSOUND|AE_EMPTY|AE_INVALID|AE_NPC_180TURN|AE_NPC_BODYDROP_HEAVY|AE_NPC_BODYDROP_LIGHT|AE_NPC_DRAW|AE_NPC_HOLSTER|AE_NPC_ITEM_PICKUP|AE_NPC_LEFTFOOT|AE_NPC_RIGHTFOOT|AE_NPC_SWISHSOUND|AE_NPC_WEAPON_DROP|AE_NPC_WEAPON_SET_ACTIVITY|AE_NPC_WEAPON_SET_SEQUENCE_NAME|AE_NPC_WEAPON_SET_SEQUENCE_NUMBER|AE_START_SCRIPTED_EFFECT|AE_STOP_SCRIPTED_EFFECT'
+      scope: constant.language
+
+    - match: '[+-]?([0-9]*[.])?[0-9]+'
+      scope: constant.numeric.float
+
+    - match: '[a-zA-Z_]+'
+      scope: string.unquoted.qc
+
+  string:
+    - meta_scope: string.quoted.double.qc
+    - match: '"'
+      scope: punctuation.definition.string.end.qc 
+      pop: true 
+
+  braces:
+    - meta_scope: meta.block
+    - match: '}'
+      scope: punctuation.section.block.end.qc
+      pop: true
+    - include: main
+
+  comment:
+    - meta_scope: comment.line.qc
+    - match: '\n'
+      pop: true

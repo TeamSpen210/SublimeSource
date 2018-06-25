@@ -1,0 +1,77 @@
+%YAML 1.2
+---
+name: Lights RAD
+file_extensions: [rad]
+scope: source.valve.lights
+
+variables:
+  file_path: '[a-zA-Z0-9_\-/\.\\]+'
+  material: '[a-zA-Z_\-/\\][0-9a-zA-Z_\-/\\]*\s+'
+  bytenum: '[0-9]{1,3}'
+
+contexts:
+  endline:
+    - match: '\n'
+      pop: true
+
+  must_end:
+    - include: endline
+    - match: '\S'
+      scope: invalid.illegal.lights
+
+  comment:
+    - meta_scope: comment.line.lights
+    - include: endline
+
+  main:
+    
+    - match: '(ldr)(\:)\s*(hdr)(\:)'
+      captures:
+        1: keyword.control.conditional.lights
+        2: punctuation.separator.lights
+        3: keyword.control.conditional.lights
+        4: punctuation.separator.lights
+      push: comment
+
+    - match: '(ldr|hdr)(:)'
+      captures:
+        1: keyword.control.conditional.lights
+        2: punctuation.separator.lights
+
+    - match: 'noshadow\s*'
+      scope: keyword.declaration.lights
+      push:
+        - match: '\s*{{material}}'
+          scope: string.unquoted.lights.noshadow
+          set: must_end
+
+    - match: 'forcetextureshadow\s*'
+      scope: keyword.declaration.lights
+      push:
+        - match: '\s*{{file_path}}'
+          scope: string.unquoted.lights.forcetextureshadow
+          set: must_end
+
+    - match: '{{material}}'
+      scope: string.unquoted.lights.material
+      push: color1
+    
+  color1:
+    - match: '((?:[0-9]{1,3}\s*){1,3})([0-9]+)'
+      captures:
+        1: constant.numeric.hex.lights
+        2: constant.numeric.integer.lights.brightness
+      set: color2
+    - include: endline
+    - match: '\S'
+      scope: invalid.illegal.not-color
+    
+  color2:
+    - match: '((?:[0-9]{1,3}\s*){1,3})([0-9]+)'
+      captures:
+        1: constant.numeric.hex.lights.color
+        2: constant.numeric.integer.lights.brightness
+      set: must_end
+    - include: endline
+    - match: '\S'
+      scope: invalid.illegal.not-color

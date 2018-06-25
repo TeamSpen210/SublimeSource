@@ -1,0 +1,96 @@
+%YAML 1.2
+---
+name: Keyvalues
+file_extensions: [vdf, vsc]
+scope: source.valve.keyvalues
+
+variables: 
+  lib_operator: '^$'
+  lib_const: '^$'
+  lib_func: '^$'
+  lib_type: '^$'
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues
+      push: comment
+  comment:
+    - meta_scope: comment.line.keyvalues
+    - match: '\n'
+      pop: true
+
+  main:
+    - include: inc_comments
+
+    - match: '\"{{lib_operator}}\"'
+      scope: string.quoted.double.keyvalues keyword.operator.word 
+    - match: '\"{{lib_const}}\"'
+      scope: string.quoted.double.keyvalues support.constant 
+    - match: '\"{{lib_func}}\"'
+      scope: string.quoted.double.keyvalues support.function
+    - match: '\"{{lib_type}}\"'
+      scope: string.quoted.double.keyvalues storage.type
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues
+      push: string
+
+    - match: '{'
+      scope: punctuation.section.block.begin.keyvalues
+      push: braces
+    - match: '}'
+      scope: invalid.illegal.stray-brace-end
+
+    - match: '\['
+      scope: punctuation.section.brackets.begin.keyvalues
+      push: flag
+    - match: ']'
+      scope: invalid.illegal.stray-bracket-end.keyvalues
+
+
+    - match: '{{lib_operator}}'
+      scope: keyword.operator.word string.unquoted.keyvalues
+    - match: '{{lib_const}}'
+      scope: support.constant string.unquoted.keyvalues
+    - match: '{{lib_func}}'
+      scope: support.function string.unquoted.keyvalues
+    - match: '{{lib_type}}'
+      scope: storage.type string.unquoted.keyvalues
+
+    - match: '[^\[\]"{}/\S ]+'
+      scope: string.unquoted.keyvalues
+
+  string:
+    - meta_scope: string.quoted.double.keyvalues
+    - match: \\.
+      scope: constant.character.escape.keyvalues
+    - include: inc_libnames
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues 
+      pop: true 
+
+  braces:
+    - meta_scope: meta.block
+    - match: '}'
+      scope: punctuation.section.block.end.keyvalues
+      pop: true
+    - include: main
+
+  flag:
+    - meta_scope: meta.brackets
+    - match: '!'
+      scope: keyword.operator.logical
+      set: flag-no-inverse
+    - match: ']'
+      scope: punctuation.section.brackets.end.keyvalues
+      pop: true
+    - match: '[/{}]+'
+      scope: invalid.illegal.stray-char
+    - match: '[^!\]]+'
+      scope: string.unquoted.keyvalues
+
+  flag-no-inverse:
+    - match: '!'
+      scope: invalid.illegal.stray-inverse
+    - include: flag
