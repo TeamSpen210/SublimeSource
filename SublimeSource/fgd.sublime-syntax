@@ -122,7 +122,7 @@ contexts:
     - match: '{{helpertypes_no_arg}}\s'
       scope: constant.language.fgd.helper
     # Unknown helper.
-    - match: '({{identifier}})(\()'
+    - match: '({{identifier}})\s*(\()'
       captures:
         1: variable.function.fgd.helper
         2: punctuation.section.parens.begin.fgd.helper
