@@ -156,7 +156,7 @@ contexts:
     - meta_scope: meta.class.fgd
     - include: inc_comments
     - match: '{{identifier}}'
-      scope: entity.name.function.fgd meta.class.fgd.name 
+      scope: entity.name.class.fgd meta.class.fgd.name 
     - match: ':'
       scope: punctuation.separator
       set:
