@@ -165,12 +165,15 @@ contexts:
     - include: inc_comments
     - match: "(input|output)"
       scope: storage.type.fgd.io
-    - match: ({{identifier}})(\()({{kvtypes}})(\))
+    # Complex.
+    # Matches: kv_name (type) readonly/report
+    - match: ({{identifier}})\s*(\()\s*({{kvtypes}})\s*(\))(\s*(?i:readonly|report))*
       captures:
         1: variable.other.member.fgd.keyvalue
         2: punctuation.section.parens.begin.fgd
         3: support.type.fgd.type
         4: punctuation.section.parens.end.fgd
+        5: keyword.control.fgd.kvalue_type
       push: keyvalue
     - match: \]
       scope: punctuation.section.block.end.fgd.entity
