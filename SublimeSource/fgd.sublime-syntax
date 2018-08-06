@@ -159,15 +159,24 @@ contexts:
       scope: entity.name.function.fgd meta.class.fgd.name 
     - match: ':'
       scope: punctuation.separator
-      set: 
-        - match: '"'
-          scope: punctuation.definition.string.begin.fgd
-          push: string
-        - match: \[
-          scope: punctuation.section.block.begin.fgd.entity
-          set: entity-body
-    - match: '\n'
-      pop: true
+      set:
+        # Must have 1 string, then an open bracket.
+        - match: \"
+          set:
+            - meta_scope: comment.block.documentation.fgd string.quoted.double.fgd
+            - include: inc_string_body
+            - match: \"
+              scope: punctuation.definition.string.end.fgd 
+              set: 
+                - match: \[
+                  scope: punctuation.section.block.begin.fgd.entity
+                  set: entity-body
+                - include: inc_all_invalid
+        - include: inc_all_invalid
+    - match: \[
+      scope: punctuation.section.block.begin.fgd.entity
+      set: entity-body
+    - include: inc_all_invalid
 
   entity-body:
     - meta_scope: meta.class.fgd meta.block.fgd.entity
