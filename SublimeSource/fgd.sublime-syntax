@@ -107,7 +107,7 @@ contexts:
       # Special case - base gets the reference types, so you 
       # can jump to definition.
       captures:
-        1: constant.language.fgd.helper
+        1: support.type.fgd.helper
         2: punctuation.section.parens.begin.fgd.helper
       push: 
         - match: '{{identifier}}'
@@ -116,11 +116,11 @@ contexts:
 
     - match: '({{helpertypes_arg}})(\()'
       captures:
-        1: constant.language.fgd.helper
+        1: support.type.fgd.helper
         2: punctuation.section.parens.begin.fgd.helper
       push: helper-args
     - match: '{{helpertypes_no_arg}}\s'
-      scope: constant.language.fgd.helper
+      scope: support.type.fgd.helper
     # Unknown helper.
     - match: '({{identifier}})\s*(\()'
       captures:
@@ -169,7 +169,7 @@ contexts:
       captures:
         1: variable.other.member.fgd.keyvalue
         2: punctuation.section.parens.begin.fgd
-        3: constant.language.fgd.type
+        3: support.type.fgd.type
         4: punctuation.section.parens.end.fgd
       push: keyvalue
     - match: \]
