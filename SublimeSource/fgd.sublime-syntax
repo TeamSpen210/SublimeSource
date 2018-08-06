@@ -39,6 +39,11 @@ contexts:
           set: string
         - match: '\S.*'
           scope: invalid.illegal.fgd.no-concat
+
+  inc_all_invalid:
+    # Non-whitespace is invalid at this scope.
+    - match: '\S\.*'
+      scope: invalid.illegal.fgd.stray-char
     - match: '"'
       scope: punctuation.definition.string.end.fgd 
       pop: true 
@@ -169,5 +174,4 @@ contexts:
             - match: \]
               scope: punctuation.section.block.end.fgd.choices
               pop: true
-        - match: '\S\.*'
-          scope: invalid.illegal.fgd.stray-char
+        - include: inc_all_invalid
