@@ -132,6 +132,7 @@ contexts:
 
   helper-args:
     - meta_scope: meta.class.fgd
+    - include: inc_comments
     - match: '\)'
       scope: punctuation.section.parens.begin.fgd.helper
       pop: true
@@ -181,6 +182,11 @@ contexts:
 
   # Keyvalue body, parameters.
   keyvalue:
+    - match: '//'
+      scope: punctuation.definition.comment.fgd
+      # We need to set this, so the keyvalue scope gets popped too.
+      set: comment
+
     - include: inc_float
     - include: inc_string
     - match: ':'
@@ -194,6 +200,7 @@ contexts:
           scope: punctuation.section.block.begin.fgd.choices
           set:
             # Choices body.
+            - include: inc_comments
             - include: inc_float
             - include: inc_string
             - match: ':'
