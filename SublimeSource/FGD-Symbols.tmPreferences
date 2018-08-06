@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>FGD Symbols</string>
 	<key>scope</key>
-	<string><![CDATA[source.valve.forge-game-data & meta.class.fgd.name]]></string>
+	<string><![CDATA[source.valve.fgd entity.name.class.fgd, source.valve.fgd variable.function.fgd.baseref]]></string>
 	<key>settings</key>
 	<dict>
 		<key>showInSymbolList</key>

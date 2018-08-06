@@ -111,7 +111,7 @@ contexts:
         2: punctuation.section.parens.begin.fgd.helper
       push: 
         - match: '{{identifier}}'
-          scope: variable.function.fgd
+          scope: variable.function.fgd.baseref
         - include: helper-args
 
     - match: '({{helpertypes_arg}})(\()'
