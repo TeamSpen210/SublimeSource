@@ -92,6 +92,14 @@ contexts:
         2: keyword.other.fgd.entity
       push: entity-header
 
+    - match: '(?i:(@)(autovisgroup))'
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.entity
+      push: auto-visgroup-header
+
+    - include: inc_all_invalid
+
   entity-header:
     - meta_scope: meta.class.fgd
     - include: inc_comments
@@ -209,3 +217,37 @@ contexts:
               scope: punctuation.section.block.end.fgd.choices
               pop: true
         - include: inc_all_invalid
+
+  auto-visgroup-header:
+    # We MUST have = "name" next.
+    - match: \=
+      scope: punctuation.separator.fgd
+      set: 
+        - match: \"
+          set:
+            - meta_scope: comment.block.documentation.fgd string.quoted.double.fgd
+            - include: inc_string_body
+            - match: \"
+              scope: punctuation.definition.string.end.fgd 
+              set: 
+                - match: \[
+                  scope: punctuation.section.block.begin.fgd.autovisgroup
+                  set: auto-visgroup-body
+                - include: inc_all_invalid
+        - include: inc_all_invalid
+
+  auto-visgroup-body:
+    - include: inc_string
+    # Exactly 1 nest only.
+    - match: \[
+      scope: punctuation.section.block.begin.fgd.autovisgroup
+      push:
+        - include: inc_string
+        - match: '\[.*'
+          scope: invalid.illegal.fgd.excess-bracket
+        - match: \]
+          scope: punctuation.section.block.end.fgd.autovisgroup
+          pop: true
+    - match: \]
+      scope: punctuation.section.block.end.fgd.autovisgroup
+      pop: true
