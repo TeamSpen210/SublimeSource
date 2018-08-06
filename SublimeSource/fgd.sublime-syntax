@@ -24,8 +24,8 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.begin.fgd
       push: string
-  string:
-    - meta_scope: string.quoted.double.fgd
+
+  inc_string_body:
     - match: \\.
       scope: constant.character.escape.fgd
     # End quote plus continuation line, must follow with another string.
@@ -33,10 +33,10 @@ contexts:
       captures:
         1: punctuation.definition.string.end.fgd
         2: keyword.operator.arithmetic.fgd.concat
-      set: 
+      push: 
         - match: '"'
           scope: punctuation.definition.string.begin.fgd
-          set: string
+          pop: true
         - match: '\S.*'
           scope: invalid.illegal.fgd.no-concat
 
@@ -44,6 +44,10 @@ contexts:
     # Non-whitespace is invalid at this scope.
     - match: '\S\.*'
       scope: invalid.illegal.fgd.stray-char
+
+  string:
+    - include: inc_string_body
+    - meta_scope: string.quoted.double.fgd
     - match: '"'
       scope: punctuation.definition.string.end.fgd 
       pop: true 
