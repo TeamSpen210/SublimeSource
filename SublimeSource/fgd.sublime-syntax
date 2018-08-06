@@ -68,6 +68,24 @@ contexts:
         3: punctuation.section.parens.begin.fgd.helper
       push: helper-args
 
+    - match: '(?i:(@)(include))'
+      captures: 
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.include
+        2: keyword.other.fgd.include
+      push: 
+        - match: '"'
+          scope: punctuation.definition.string.begin.fgd
+          set: 
+            - meta_scope: string.quoted.double.fgd.include
+            - match: \\.
+              scope: constant.character.escape.fgd
+            - match: '"'
+              scope: punctuation.definition.string.end.fgd meta.filepath.relative
+              pop: true 
+            # Do it this way so the punctuation is NOT meta.filepath
+            - match: .
+              scope: meta.filepath.relative
+
     - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)'
       captures: 
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
