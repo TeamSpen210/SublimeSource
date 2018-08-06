@@ -5,8 +5,8 @@ file_extensions: [fgd]
 scope: source.valve.fgd
 
 variables:
-  kvtypes: '(?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void)'
-  helpertypes_arg: '(?i:animator|base|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)'
+  kvtypes: '(?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle)'
+  helpertypes_arg: '(?i:animator|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)'
   helpertypes_no_arg: '(?i:halfgridsnap)'
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
 
@@ -57,7 +57,7 @@ contexts:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.mapsize
         2: keyword.other.fgd.mapsize
 
-    - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass)\b)'
+    - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)'
       captures: 
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.entity
