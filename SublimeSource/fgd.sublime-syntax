@@ -61,10 +61,12 @@ contexts:
     # - match: '"'
     #   scope: punctuation.definition.string.begin.fgd
     #   push: string
-    - match: '(?i:(@)mapsize)'
+    - match: '(?i:(@)(mapsize))\s*(\()'
       captures: 
         1: punctuation.definition.keyword.fgd keyword.other.fgd.mapsize
         2: keyword.other.fgd.mapsize
+        3: punctuation.section.parens.begin.fgd.helper
+      push: helper-args
 
     - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)'
       captures: 
