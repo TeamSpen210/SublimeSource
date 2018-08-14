@@ -12,16 +12,18 @@ variables:
 
 contexts:
   inc_comments:
-    - match: '//'
-      scope: punctuation.definition.comment.fgd
+    - match: //
+      scope: punctuation.definition.comment.begin.fgd
       push: comment
   comment:
-    - meta_scope: comment.line.fgd
-    - match: '\n'
+    - meta_scope: comment.line.double-slash.fgd
+    - match: \)
+      scope: comment.line.double-slash.fgd
+    - match: \n
       pop: true
 
   inc_string:
-    - match: '"'
+    - match: \"
       scope: punctuation.definition.string.begin.fgd
       push: string
 
@@ -55,6 +57,64 @@ contexts:
   inc_float:
     - match: '[+-]?([0-9]*[.])?[0-9]+'
       scope: constant.numeric.float
+
+  unified_tags_paren:
+    - include: inc_comments
+    - match: \)
+      scope: punctuation.section.parens.end.fgd
+      pop: true
+    - match: \!
+      scope: keyword.operator.logical.fgd.invert
+      set: unified_tags_no_invert_paren
+    - match: \,
+      scope: punctuation.separator.sequence.fgd
+    - match: '{{identifier}}'
+      scope: support.constant.fgd
+      set: unified_tags_no_invert_paren
+    - include: inc_all_invalid
+
+  unified_tags_no_invert_paren:
+    - include: inc_comments
+    - match: \)
+      scope: punctuation.section.parens.end.fgd
+      pop: true
+    - match: \!
+      scope: invalid.illegal.stray-inverse
+    - match: \,
+      scope: punctuation.separator.sequence.fgd
+      set: unified_tags_paren
+    - match: '{{identifier}}'
+      scope: support.constant.fgd
+    - include: inc_all_invalid
+
+  unified_tags_brack:
+    - include: inc_comments
+    - match: \]
+      scope: punctuation.section.brackets.end.fgd
+      pop: true
+    - match: \!
+      scope: keyword.operator.logical.fgd.invert
+      set: unified_tags_no_invert_brack
+    - match: \,
+      scope: punctuation.separator.sequence.fgd
+    - match: '{{identifier}}'
+      scope: support.constant.fgd
+      set: unified_tags_no_invert_brack
+    - include: inc_all_invalid
+
+  unified_tags_no_invert_brack:
+    - include: inc_comments
+    - match: \]
+      scope: punctuation.section.brackets.end.fgd
+      pop: true
+    - match: \!
+      scope: invalid.illegal.stray-inverse
+    - match: \,
+      scope: punctuation.separator.sequence.fgd
+      set: unified_tags_brack
+    - match: '{{identifier}}'
+      scope: support.constant.fgd
+    - include: inc_all_invalid
 
   main:
     - include: inc_comments
@@ -111,7 +171,7 @@ contexts:
 
 
     # Helpers, optionally with args.
-    - match: '(base)(\()'
+    - match: ((?i:base))(\()
       # Special case - base gets the reference types, so you 
       # can jump to definition.
       captures:
@@ -121,6 +181,13 @@ contexts:
         - match: '{{identifier}}'
           scope: variable.function.fgd.baseref
         - include: helper-args
+
+    - match: ((?i:appliesto))(\()
+      # Unified FGD Extension.
+      captures:
+        1: keyword.declaration.fgd
+        2: punctuation.section.parens.begin.fgd.helper
+      push: unified_tags_paren
 
     - match: '({{helpertypes_arg}})(\()'
       captures:
@@ -181,21 +248,57 @@ contexts:
   entity-body:
     - meta_scope: meta.class.fgd meta.block.fgd.entity
     - include: inc_comments
-    - match: "(input|output)"
+
+    - match: (input|output)
       scope: storage.type.fgd.io
+      push: io_name
+    - match: ({{identifier}})
+      scope: variable.other.member.fgd.keyvalue
+      push: keyvalue_pre_type
     # Complex.
     # Matches: kv_name (type) readonly/report
-    - match: ({{identifier}})\s*(\()\s*({{kvtypes}})\s*(\))(\s*(?i:readonly|report))*
-      captures:
-        1: variable.other.member.fgd.keyvalue
-        2: punctuation.section.parens.begin.fgd
-        3: support.type.fgd.type
-        4: punctuation.section.parens.end.fgd
-        5: keyword.control.fgd.kvalue_type
-      push: keyvalue
+    
     - match: \]
       scope: punctuation.section.block.end.fgd.entity
       pop: true
+
+  io_name:
+    # Can't use this twice in a row.
+    - match: (input|output)
+      scope: invalid.illegal.fgd
+    - match: ({{identifier}})
+      scope: variable.other.member.fgd.keyvalue
+      set: keyvalue_pre_type
+    - include: inc_all_invalid
+
+  keyvalue_pre_type:
+    # After the idenfier, so either (type) or [tags](type)
+    - match: \(
+      scope: punctuation.section.parens.begin.fgd
+      set: keyvalue_type
+    - match: \[
+      scope: punctuation.section.brackets.begin.fgd
+      set: 
+        - keyvalue_no_tags
+        - unified_tags_brack
+    - include: inc_all_invalid
+
+  keyvalue_no_tags:
+    # After tags, so must be parens.
+    - match: \(
+      scope: punctuation.section.parens.begin.fgd
+      set: keyvalue_type
+    - include: inc_all_invalid
+
+  keyvalue_type:
+    # Inside type parens.
+    - match: \s*({{kvtypes}})\s*(\))(\s*(?i:readonly|report))*
+      captures:
+        1: support.type.fgd.type
+        2: punctuation.section.parens.end.fgd
+        3: keyword.control.fgd.kvalue_type
+      set: keyvalue
+    - include: inc_all_invalid
 
   # Keyvalue body, parameters.
   keyvalue:
