@@ -1,0 +1,31 @@
+{
+   "scope": "meta.fgd.helpers",
+   "completions":
+   [
+      { "trigger": "animator", "contents": "animator($0)" },
+      { "trigger": "base", "contents": "base($0)" },
+      { "trigger": "bbox", "contents": "bbox($0)" },
+      { "trigger": "color", "contents": "color($0)" },
+      { "trigger": "cylinder", "contents": "cylinder($0)" },
+      { "trigger": "decal", "contents": "decal($0)" },
+      { "trigger": "frustum", "contents": "frustum($0)" },
+      { "trigger": "iconsprite", "contents": "iconsprite($0)" },
+      { "trigger": "instance", "contents": "instance($0)" },
+      { "trigger": "keyframe", "contents": "keyframe($0)" },
+      { "trigger": "light", "contents": "light($0)" },
+      { "trigger": "lightcone", "contents": "lightcone($0)" },
+      { "trigger": "lightprop", "contents": "lightprop($0)" },
+      { "trigger": "line", "contents": "line($0)" },
+      { "trigger": "overlay", "contents": "overlay($0)" },
+      { "trigger": "overlay_transition", "contents": "overlay_transition($0)" },
+      { "trigger": "quadbounds", "contents": "quadbounds($0)" },
+      { "trigger": "sidelist", "contents": "sidelist($0)" },
+      { "trigger": "size", "contents": "size($0)" },
+      { "trigger": "sphere", "contents": "sphere($0)" },
+      { "trigger": "sprite", "contents": "sprite($0)" },
+      { "trigger": "studio", "contents": "studio($0)" },
+      { "trigger": "studioprop", "contents": "studioprop($0)" },
+      { "trigger": "wirebox", "contents": "wirebox($0)" },
+      { "trigger": "halfgridsnap", "contents": "halfgridsnap($0)" }
+   ]
+}

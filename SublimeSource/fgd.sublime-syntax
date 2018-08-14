@@ -161,7 +161,7 @@ contexts:
     - include: inc_all_invalid
 
   entity-header:
-    - meta_scope: meta.class.fgd
+    - meta_scope: meta.class.fgd meta.fgd.helpers
     - include: inc_comments
     - match: '='
       scope: punctuation.separator
