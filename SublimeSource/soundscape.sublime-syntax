@@ -1,0 +1,272 @@
+%YAML 1.2
+---
+name: Soundscapes
+# file_extensions: [p2c]
+scope: source.valve.keyvalues.soundscape
+
+variables:
+  float: '[+-]?([0-9]*[.])?[0-9]+'
+  identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
+  sound_chars: '[*#@<>^()}$!?]'
+  # Soundlevels.
+  soundlevel: 'SNDLVL_(?:NONE|NORM|TALKING|GUNFIRE|(?i:[0-9]+dB))'
+
+contexts:
+  prototype:
+    - match: //
+      scope: punctuation.definition.comment.begin.fgd comment.line.double-slash
+      push: comment
+  comment:
+    - meta_scope: comment.line.double-slash.fgd
+    - match: \)
+      scope: comment.line.double-slash.fgd
+    - match: \n
+      pop: true
+
+  inc_string:
+    - match: \"
+      scope: punctuation.definition.string.begin.fgd string.quoted.double
+      push: string
+
+  inc_string_body:
+    - meta_include_prototype: false
+    - match: \\.
+      scope: constant.character.escape.fgd
+
+  inc_all_invalid:
+    # Non-whitespace is invalid at this scope.
+    - match: '\S\.*'
+      scope: invalid.illegal.fgd.stray-char
+
+  string:
+    - include: inc_string_body
+    - meta_scope: string.quoted.double.fgd
+    - match: '"'
+      scope: punctuation.definition.string.end.fgd 
+      pop: true 
+
+  inc_float:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+
+  main:
+    - match: '("?)({{identifier}})(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: entity.name.class.soundscape
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double 
+      push: 
+        - match: \{
+          scope: meta.block punctuation.section.block.begin
+          set: expect_rule
+        - include: inc_all_invalid
+
+    - include: inc_all_invalid
+    
+
+  # Expect a quoted or unquoted value of a type.
+  value_string:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: string
+    - match: '[a-zA-Z0-9_.]+'
+      scope: string.unquoted.soundscape
+      pop: true
+    - match: \n
+      scope: invalid.illegal.newline
+    - include: inc_all_invalid
+
+  # Expect a quoted/unquoted float.
+  value_float:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: 
+        - include: inc_string_body
+        - match: ','
+          scope: punctuation.separator.sequence
+        - match: '{{float}}'
+          scope: constant.numeric.float
+        - match: '"'
+          scope: punctuation.definition.string.end string.quoted.double
+          pop: true 
+        - include: inc_all_invalid
+    - match: '[0-9]+'
+      scope: constant.numeric.float
+      pop: true
+    - match: \n
+      scope: invalid.illegal.newline
+    - include: inc_all_invalid
+
+  # Expect a quoted/unquoted integer.
+  value_integer:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: 
+        - include: inc_string_body
+        - match: ','
+          scope: punctuation.separator.sequence
+        - match: '[0-9]+'
+          scope: constant.numeric.integer
+        - match: '"'
+          scope: punctuation.definition.string.end string.quoted.double
+          pop: true 
+        - include: inc_all_invalid
+    - match: '[0-9]+'
+      scope: constant.numeric.integer
+      pop: true
+    - match: \n
+      scope: invalid.illegal.newline
+    - include: inc_all_invalid
+
+  # A quoted filename, with the sound characters beforehand.
+  value_sound:
+    - include: inc_comments
+    - match: '(")({{sound_chars}}{0,2})([a-zA-Z0-9_.\\/]+)(\1)'
+      captures:
+        1: punctuation.definition.string.begin string.quoted.double
+        2: keyword.operator.soundscape
+        3: string.soundscape.file
+        4: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - match: \n
+      scope: invalid.illegal.newline
+    - include: inc_all_invalid
+
+  # Inside a scape, allowing each rule.
+  expect_rule:
+    - meta_scope: meta.block
+    - match: \}
+      scope: punctuation.section.block.end
+      pop: true
+
+    # Each of the rules. The first/last matches optionally quotes.
+
+    - match: '("?)((?i:playlooping))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: 
+        - match: \{
+          scope: punctuation.section.block.begin.soundscape.rule
+          set: rule_playlooping
+        - include: inc_all_invalid
+
+    - match: '("?)((?i:playrandom))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: 
+        - match: \{
+          scope: punctuation.section.block.begin.soundscape.rule
+          set: rule_playrandom
+        - include: inc_all_invalid
+
+    - match: '("?)((?i:playsoundscape))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: 
+        - match: \{
+          scope: punctuation.section.block.begin.soundscape.rule
+          set: rule_playsoundscape
+        - include: inc_all_invalid
+        
+    - match: '("?)((?i:dsp|dsp_volume))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_integer
+        
+    - match: '("?)((?i:soundmixer))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_string
+
+  rule_common:
+    - match: '("?)((?i:volume|time|attenuation|origin))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+      push: value_float
+
+    - match: '("?)((?i:soundlevel))(\1)\s*("?)({{soundlevel}})(\4)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+        4: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        5: keyword.other.soundscape
+        6: punctuation.definition.string.end.soundscape.operator string.quoted.double
+
+    - match: '("?)((?i:position))(\1)\s*("?)((?i:random))(\4)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+        4: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        5: keyword.other.soundscape
+        6: punctuation.definition.string.end.soundscape.operator string.quoted.double
+
+    - match: '("?)((?i:pitch|position))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+      push: value_integer
+    - match: \}
+      scope: punctuation.section.block.end.soundscape
+      pop: true
+
+  rule_playlooping:
+    - include: rule_common
+    - match: '("?)((?i:wave))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+      push: value_sound
+    - include: inc_all_invalid
+
+  rule_playrandom:
+    - include: rule_common
+    - match: '("?)((?i:rndwave))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+      push: 
+        - match: \{
+          scope: punctuation.section.block.begin.soundscape
+          set:
+            - match: '("?)((?i:wave))(\1)'
+              captures:
+                1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
+                2: variable.parameter.soundscape
+                3: punctuation.definition.string.end.soundscape.operator string.quoted.double
+              push: value_sound
+            - match: \}
+              scope: punctuation.section.block.end.soundscape
+              pop: true
+            - include: inc_all_invalid
+        - include: inc_all_invalid
+    - include: inc_all_invalid
+
+  rule_playsoundscape:
+    - include: rule_common
+    - match: '("?)((?i:name))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_string
+    - include: inc_all_invalid
