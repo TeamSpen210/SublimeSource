@@ -345,15 +345,18 @@ contexts:
                 - match: \[
                   scope: punctuation.section.block.begin.fgd.autovisgroup
                   set: auto-visgroup-body
+                - include: inc_comments
                 - include: inc_all_invalid
         - include: inc_all_invalid
 
   auto-visgroup-body:
+    - include: inc_comments
     - include: inc_string
     # Exactly 1 nest only.
     - match: \[
       scope: punctuation.section.block.begin.fgd.autovisgroup
       push:
+        - include: inc_comments
         - include: inc_string
         - match: '\[.*'
           scope: invalid.illegal.fgd.excess-bracket
