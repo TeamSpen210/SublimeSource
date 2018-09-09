@@ -6,7 +6,7 @@ scope: source.valve.keyvalues.soundscape
 
 variables:
   float: '[+-]?([0-9]*[.])?[0-9]+'
-  identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
+  identifier: '[A-Za-z\_\.0-9]+'
   sound_chars: '[*#@<>^()}$!?]'
   # Soundlevels.
   soundlevel: 'SNDLVL_(?:NONE|NORM|TALKING|GUNFIRE|(?i:[0-9]+dB))'
