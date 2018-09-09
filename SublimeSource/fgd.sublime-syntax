@@ -146,17 +146,39 @@ contexts:
             - match: .
               scope: meta.filepath.relative
 
-    - match: '(?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)'
+    - match: (?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)
       captures: 
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.entity
       push: entity-header
 
-    - match: '(?i:(@)(autovisgroup))'
+    - match: (?i:(@)(autovisgroup))
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
-        2: keyword.other.fgd.entity
+        2: keyword.other.fgd.visgroup
       push: auto-visgroup-header
+
+    # Material exclusion, [ "strings" ]
+    - match: (?i:(@)(materialexclusion))
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.exclude
+      push: 
+        - match: \[
+          scope: punctuation.section.block.begin.fgd
+          set:
+            - include: inc_string
+            - include: inc_comments
+            - match: \]
+              scope: punctuation.section.block.end.fgd
+              pop: true
+            - include: inc_all_invalid
+        - include: inc_comments
+        - include: inc_all_invalid
+
+
+    - match: '@'
+      scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
 
     - include: inc_all_invalid
 
