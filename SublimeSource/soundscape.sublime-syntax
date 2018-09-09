@@ -184,6 +184,13 @@ contexts:
         3: punctuation.definition.string.end.soundscape.rule string.quoted.double
       push: value_integer
         
+    - match: '("?)((?i:fadetime))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_float
+        
     - match: '("?)((?i:soundmixer))(\1)'
       captures:
         1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
@@ -262,6 +269,12 @@ contexts:
     - include: inc_all_invalid
 
   rule_playsoundscape:
+    - match: '("?)((?i:ambientoriginoverride))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.parameter.soundscape
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_float
     - include: rule_common
     - match: '("?)((?i:name))(\1)'
       captures:
