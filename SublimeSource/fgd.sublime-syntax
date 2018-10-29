@@ -63,8 +63,8 @@ contexts:
     - match: \)
       scope: punctuation.section.parens.end.fgd
       pop: true
-    - match: \!
-      scope: keyword.operator.logical.fgd.invert
+    - match: '[!+-]'
+      scope: keyword.operator.logical.fgd
       set: unified_tags_no_invert_paren
     - match: \,
       scope: punctuation.separator.sequence.fgd
@@ -78,8 +78,8 @@ contexts:
     - match: \)
       scope: punctuation.section.parens.end.fgd
       pop: true
-    - match: \!
-      scope: invalid.illegal.stray-inverse
+    - match: '[!+-]'
+      scope: invalid.illegal.stray-operator
     - match: \,
       scope: punctuation.separator.sequence.fgd
       set: unified_tags_paren
@@ -92,8 +92,8 @@ contexts:
     - match: \]
       scope: punctuation.section.brackets.end.fgd
       pop: true
-    - match: \!
-      scope: keyword.operator.logical.fgd.invert
+    - match: '[!+-]'
+      scope: keyword.operator.logical.fgd
       set: unified_tags_no_invert_brack
     - match: \,
       scope: punctuation.separator.sequence.fgd
@@ -107,8 +107,8 @@ contexts:
     - match: \]
       scope: punctuation.section.brackets.end.fgd
       pop: true
-    - match: \!
-      scope: invalid.illegal.stray-inverse
+    - match: '[!+-]'
+      scope: invalid.illegal.stray-operator
     - match: \,
       scope: punctuation.separator.sequence.fgd
       set: unified_tags_brack
@@ -347,6 +347,9 @@ contexts:
             - include: inc_string
             - match: ':'
               scope: punctuation.separator.fgd.choices
+            - match: \[
+              scope: punctuation.section.brackets.begin.fgd
+              push: unified_tags_brack
             - match: \]
               scope: punctuation.section.block.end.fgd.choices
               pop: true
