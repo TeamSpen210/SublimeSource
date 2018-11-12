@@ -5,10 +5,16 @@ file_extensions: [fgd]
 scope: source.valve.fgd
 
 variables:
-  kvtypes: '(?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle)'
-  helpertypes_arg: '(?i:animator|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)'
-  helpertypes_no_arg: '(?i:halfgridsnap)'
+  kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
+  helpertypes_arg: (?i:animator|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
+  helpertypes_no_arg: (?i:halfgridsnap)
+
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
+  
+  kvkeywords_no_arg: (?i:readonly|report|important)
+  kvkeywords_arg: (?i:group)
+  restypes: (?i:model|texture|material)
+
 
 contexts:
   inc_comments:
@@ -314,9 +320,26 @@ contexts:
 
   keyvalue_type:
     # Inside type parens.
-    - match: \s*({{kvtypes}})\s*(\))(\s*(?i:readonly|report))*
+    - match: \s*({{kvtypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
       captures:
         1: support.type.fgd.type
+        2: punctuation.section.parens.end.fgd
+        3: keyword.control.fgd.kvalue_type
+      set: keyvalue
+
+    # Source2 - resource:type values.
+    - match: \s*(resource)(:)({{restypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+      captures:
+        1: keyword.fgd
+        2: punctuation.separator.fgd
+        3: support.type.fgd.type
+        4: punctuation.section.parens.end.fgd
+        5: keyword.control.fgd.kvalue_type
+      set: keyvalue
+    # Unknown type - that bit is bad, but everything else is fine.
+    - match: \s*([a-zA-Z0-9:_]+)\s*(\))(\s*{{kvkeywords_no_arg}})*
+      captures:
+        1: invalid.illegal.unknown
         2: punctuation.section.parens.end.fgd
         3: keyword.control.fgd.kvalue_type
       set: keyvalue
@@ -328,6 +351,11 @@ contexts:
       scope: punctuation.definition.comment.fgd
       # We need to set this, so the keyvalue scope gets popped too.
       set: comment
+
+    # Source 2 allows "groups" here to define additional options.
+    - match: \[
+      scope: punctuation.section.brackets.begin.fgd.s2group
+      push: s2-group
 
     - include: inc_float
     - include: inc_string
@@ -391,3 +419,52 @@ contexts:
     - match: \]
       scope: punctuation.section.block.end.fgd.autovisgroup
       pop: true
+
+  s2-group:
+    # Match something like [group="Blah blah", report, readonly]
+    # Extra ] matches in each level, so it'll only error on this section of syntax
+    # and not the rest of the file.
+
+    - match: '{{kvkeywords_no_arg}}'
+      scope: keyword.control.fgd.kvalue_type
+
+    - match: '{{kvkeywords_arg}}'
+      scope: keyword.control.fgd.kvalue_type
+      push: s2-group-arg
+
+    - match: '{{identifier}}'
+      scope: variable.language.fgd
+      push: s2-group-arg
+        
+    - match: \]
+      scope: punctuation.section.brackets.end.fgd
+      pop: true
+
+    - match: \,
+      scope: punctuation.separator.sequence.fgd
+
+    # To get out of the nested scope, match being preceeded by a square bracket.
+    # That will match the bracket in our context above, but not consume
+    # any characters.
+    - match: '(?<=\])'
+      pop: true
+    - include: inc_all_invalid
+
+  s2-group-arg:
+    - match: =
+      scope: keyword.operator.assignment
+      set:
+        - match: \"
+          scope: string.quoted.double punctuation.definition.string.begin
+          set: string
+        - match: '{{identifier}}'
+          scope: string.unquoted.fgd
+          pop: true
+        - match: \]
+          scope: invalid.illegal.fgd
+          pop: true
+        - include: inc_all_invalid
+    - match: \]
+      scope: invalid.illegal.fgd
+      pop: true
+    - include: inc_all_invalid
