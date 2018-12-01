@@ -1,0 +1,94 @@
+{
+   "scope": "meta.editoritems.iloc-itemid",
+   "completions":
+   [
+       {
+           "trigger": "ITEM_BARRIER",
+           "contents": "ITEM_BARRIER:"
+       },
+       {
+           "trigger": "ITEM_BARRIER_HAZARD",
+           "contents": "ITEM_BARRIER_HAZARD:"
+       },
+       {
+           "trigger": "ITEM_BUTTON_FLOOR",
+           "contents": "ITEM_BUTTON_FLOOR:"
+       },
+       {
+           "trigger": "ITEM_BUTTON_PEDESTAL",
+           "contents": "ITEM_BUTTON_PEDESTAL:"
+       },
+       {
+           "trigger": "ITEM_CATAPULT",
+           "contents": "ITEM_CATAPULT:"
+       },
+       {
+           "trigger": "ITEM_CUBE",
+           "contents": "ITEM_CUBE:"
+       },
+       {
+           "trigger": "ITEM_GOO",
+           "contents": "ITEM_GOO:"
+       },
+       {
+           "trigger": "ITEM_LASER_CATCHER_CENTER",
+           "contents": "ITEM_LASER_CATCHER_CENTER:"
+       },
+       {
+           "trigger": "ITEM_LASER_EMITTER_CENTER",
+           "contents": "ITEM_LASER_EMITTER_CENTER:"
+       },
+       {
+           "trigger": "ITEM_LASER_RELAY_CENTER",
+           "contents": "ITEM_LASER_RELAY_CENTER:"
+       },
+       {
+           "trigger": "ITEM_LIGHT_BRIDGE",
+           "contents": "ITEM_LIGHT_BRIDGE:"
+       },
+       {
+           "trigger": "ITEM_LIGHT_PANEL",
+           "contents": "ITEM_LIGHT_PANEL:"
+       },
+       {
+           "trigger": "ITEM_PAINT_SPLAT",
+           "contents": "ITEM_PAINT_SPLAT:"
+       },
+       {
+           "trigger": "ITEM_PANEL_ANGLED",
+           "contents": "ITEM_PANEL_ANGLED:"
+       },
+       {
+           "trigger": "ITEM_PANEL_CLEAR",
+           "contents": "ITEM_PANEL_CLEAR:"
+       },
+       {
+           "trigger": "ITEM_PANEL_FLIP",
+           "contents": "ITEM_PANEL_FLIP:"
+       },
+       {
+           "trigger": "ITEM_PANEL_STAIRS",
+           "contents": "ITEM_PANEL_STAIRS:"
+       },
+       {
+           "trigger": "ITEM_PISTON_PLATFORM",
+           "contents": "ITEM_PISTON_PLATFORM:"
+       },
+       {
+           "trigger": "ITEM_RAIL_PLATFORM",
+           "contents": "ITEM_RAIL_PLATFORM:"
+       },
+       {
+           "trigger": "ITEM_SECONDARY_OBSERVATION_ROOM",
+           "contents": "ITEM_SECONDARY_OBSERVATION_ROOM:"
+       },
+       {
+           "trigger": "ITEM_TBEAM",
+           "contents": "ITEM_TBEAM:"
+       },
+       {
+           "trigger": "ITEM_TURRET",
+           "contents": "ITEM_TURRET:"
+       }
+   ]
+}

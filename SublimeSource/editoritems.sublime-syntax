@@ -5,9 +5,13 @@ file_extensions: [p2c]
 scope: source.valve.keyvalues.editoritems
 
 variables: 
-  lib_const: '(?i:black|white|special|true|false|2x2|4x4|angledpaneltype|autodrop|autorespawn|autotrigger|barriertype|bottomlevel|buttontype|buttontype|catapultspeed|ceiling|collide_antlines|collide_glass|collide_grating|collide_nothing|collide_physics|collide_solid|connection_tbeam_polarity|connection_standard|connectioncountpolarity|connectioncount|cubetype|desires_up|floor|handle_36_directions|handle_4_directions|handle_5_positions|handle_6_positions|handle_8_positions|handle_none|portalable|ramp_30_deg_open|ramp_45_deg_open|ramp_60_deg_open|ramp_90_deg_open|startdeployed|startenabled|startreversed|startup|timerdelay|timersound|toplevel|verticalalignment|wall|oscillate|traveldistance|speed|traveldirection|startingposition|startactive)'
-  lib_func: '(?i:activate|angledpanelanimation|brushcount|brushsidecount|cananchoronbarriers|cananchorongoo|center|collideagainst|collidetype|connectionpoints|deactivate|defaultvalue|desiredfacing|dimensions|dir|editor|embeddedvoxels|embedface|entitycount|exporting|grid|groupid|id|image|index|inputs|instances|invalidsurface|item|itemclass|itemdata|material|model|modelname|movementhandle|name|normal|occupiedvoxels|occupiesvoxel|offset|outputs|overlay|palette|point|pos|pos|pos1|pos2|position|priority|properties|rotation|signageoffset|solid|sound_created|sound_deleted|sound_editing_activate|sound_editing_deactivate|sounds|subpos1|subpos2|subtype|subtypeproperty|surface|targetname|texturename|tooltip|type|volume|voxel)'
-  lib_type: '(?i:itemturret|itemtbeam|itemtbeam|itemstairs|itemrailplatformextent|itemrailplatform|itempistonplatform|itempedestalbutton|itempanelflip|itempaintsplat|itempaintdropper|itemlightstrip|itemlightbridge|itemlaseremitter|itemgoo|itemexitdoor|itementrancedoor|itemcube|itemcoopexitdoor|itemcoopentrancedoor|itemcatapult|itembuttonfloor|itembarrierhazardextent|itembarrierhazard|itembarrierextent|itembarrier|itemangledpanel|itemcatapulttarget)'
+  lib_const: (?i:black|white|special|true|false|2x2|4x4|angledpaneltype|autodrop|autorespawn|autotrigger|barriertype|bottomlevel|buttontype|buttontype|catapultspeed|ceiling|collide_antlines|collide_glass|collide_grating|collide_nothing|collide_physics|collide_solid|connection_tbeam_polarity|connection_standard|connectioncountpolarity|connectioncount|cubetype|desires_up|floor|handle_36_directions|handle_4_directions|handle_5_positions|handle_6_positions|handle_8_positions|handle_none|portalable|ramp_30_deg_open|ramp_45_deg_open|ramp_60_deg_open|ramp_90_deg_open|startdeployed|startenabled|startreversed|startup|timerdelay|timersound|toplevel|verticalalignment|wall|oscillate|traveldistance|speed|traveldirection|startingposition|startactive)
+  lib_func: (?i:activate|angledpanelanimation|brushcount|brushsidecount|cananchoronbarriers|cananchorongoo|center|collideagainst|collidetype|connectionpoints|deactivate|defaultvalue|desiredfacing|dimensions|dir|editor|embeddedvoxels|embedface|entitycount|exporting|grid|groupid|id|image|index|inputs|instances|invalidsurface|item|itemclass|itemdata|material|model|modelname|movementhandle|name|normal|occupiedvoxels|occupiesvoxel|offset|outputs|overlay|palette|point|pos|pos|pos1|pos2|position|priority|properties|rotation|signageoffset|solid|sound_created|sound_deleted|sound_editing_activate|sound_editing_deactivate|sounds|subpos1|subpos2|subtype|subtypeproperty|surface|targetname|texturename|tooltip|type|volume|voxel)
+  lib_type: (?i:itemturret|itemtbeam|itemtbeam|itemstairs|itemrailplatformextent|itemrailplatform|itempistonplatform|itempedestalbutton|itempanelflip|itempaintsplat|itempaintdropper|itemlightstrip|itemlightbridge|itemlaseremitter|itemgoo|itemexitdoor|itementrancedoor|itemcube|itemcoopexitdoor|itemcoopentrancedoor|itemcatapult|itembuttonfloor|itembarrierhazardextent|itembarrierhazard|itembarrierextent|itembarrier|itemangledpanel|itemcatapulttarget)
+
+  ilocs_builtin: (?i:glass_right_convex_corner|glass_left_convex_corner|glass_right_straight|glass_convex_corner|glass_left_straight|glass_right_corner|glass_left_corner|glass_right_short|black_frame_coop|glass_left_short|white_frame_coop|door_frame_coop|spentrycorrdown|black_frame_sp|glass_straight|spexitcorrdown|transitionents|white_frame_sp|coopentrydown|door_frame_sp|elevatorentry|spentrycorrup|coopcorrdown|elevatorexit|glass_corner|glass_frames|lasercatcher|laseremitter|spentrycorr1|spentrycorr2|spentrycorr3|spentrycorr4|spentrycorr5|spentrycorr6|spentrycorr7|spexitcorrup|black_frame|coopentryup|glass_short|indpancheck|indpantimer|spentrycorr|spexitcorr1|spexitcorr2|spexitcorr3|spexitcorr4|white_frame|coopcorrup|door_frame|laserrelay|spexitcorr|coopcorr1|coopcorr2|coopcorr3|coopcorr4|coopentry|glass_128|indtoggle|coopcorr|coopexit|spentry|indpan|spexit)
+  ilocs_itemids: (?i:ITEM_(BARRIER_HAZARD|BARRIER|BUTTON_FLOOR|BUTTON_PEDESTAL|CATAPULT|CUBE|GOO|LASER_CATCHER_CENTER|LASER_EMITTER_CENTER|LASER_RELAY_CENTER|LIGHT_BRIDGE|LIGHT_PANEL|PAINT_SPLAT|PANEL_ANGLED|PANEL_CLEAR|PANEL_FLIP|PANEL_STAIRS|PISTON_PLATFORM|RAIL_PLATFORM|SECONDARY_OBSERVATION_ROOM|TBEAM|TURRET))
+  ilocs_subitems: (?i:track_platform_oscillate|track_bottom_grate|track_plat_oscil|track_platforms|edgeless_black|edgeless_white|track_platform|weighted_black|weighted_white|btn_edgeless|btn_weighted|sphere_black|sphere_white|track_bottom|track_middle|track_single|floor_black|floor_white|fun_emitter|redirection|track_plats|ball_black|ball_white|btn_sphere|cube_black|cube_white|fizz_model|reflection|track_plat|track_rail|btn_black|btn_floor|btn_white|companion|fizz_base|fun_black|fun_frame|fun_white|track_top|btn_ball|btn_cube|edgeless|fizz_mdl|redirect|standard|franken|monster|reflect|sphere|laser|ball|comp)
 
 # Copy direct from keyvalues!!
 
@@ -47,13 +51,25 @@ contexts:
     - meta_scope: string.quoted.double.keyvalues
     - match: \\.
       scope: constant.character.escape.keyvalues
-    - match: '[+-]?\b([0-9]*[.])?[0-9]+\b%?'
+    - match: '[+-]?\b([0-9]*([.]))?[0-9]+\b%?'
       scope: constant.numeric.float
+      captures:
+        2: punctuation.separator.decimal
     - match: '[+-]?\b[0-9]+\b%?'
       scope: constant.numeric.integer
 
+    # instancelocs names. We set so we can escape
+    # if the string unexpectedly ends.
+    - match: <
+      scope: punctuation.section.mapping.begin.editoritems.instancelocs
+      set: ilocs-item_id
+
+    - match: \[
+      scope: punctuation.section.mapping.begin.editoritems.instancelocs
+      set: ilocs-builtin
+
     # Match $instvars
-    - match: '(!)?(\$[a-zA-Z_.]*[a-zA-Z0-9_.]*)'
+    - match: '(!)?(\$[a-zA-Z_.][a-zA-Z0-9_.]*)'
       captures:
         1: keyword.operator.logical.invert
         2: variable.other.member.bee2.instvar
@@ -67,6 +83,9 @@ contexts:
       scope: support.function
     - match: '(?<=[ \t"]){{lib_type}}(?=[ \t"])'
       scope: storage.type
+
+    - match: '[,]'
+      scope: punctuation.separator.sequence
       
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues 
@@ -96,3 +115,63 @@ contexts:
     - match: '!'
       scope: invalid.illegal.stray-inverse
     - include: flag
+
+
+  ilocs-item_id: # <ITEM_ID
+    - meta_scope: string.quoted.double.keyvalues meta.editoritems.iloc-itemid
+    - match: '{{ilocs_itemids}}'
+      scope: constant.language.editoritems.iloc-builtin
+    - match: '[a-zA-Z_0-9]'
+      scope: variable.language.editoritems
+    - match: '\:'
+      scope: punctuation.separator.mapping.key-value.editoritems.instancelocs
+      set: ilocs-subitem
+    - match: \"
+      scope: invalid.illegal.premature-end
+      pop: true
+    - match: '>'
+      scope: punctuation.section.mapping.end.editoritems.instancelocs
+      set: string
+
+  ilocs-subitem: # :0, 1, predefined, bee2_blah
+    - meta_scope: meta.editoritems.iloc-subitem
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '[0-9]+'
+      scope: constant.numeric.integer
+
+    # Only bee2_names are arbitrary.
+    - match: '{{ilocs_subitems}}'
+      scope: constant.language
+
+    - match: '(?i:bee2_)([a-zA-Z0-9_]+)'
+      scope: variable.language.editoritems
+
+    - match: '(?i:b(e(e(2_?)?)?)?)'
+      scope: constant.language
+
+    - match: '[a-zA-Z0-9_]'
+      scope: invalid.illegal
+
+    - match: '\:'
+      scope: invalid.illegal.extra-sep
+    - match: \"
+      scope: invalid.illegal.premature-end
+      pop: true
+    - match: '>'
+      scope: punctuation.section.mapping.end.editoritems.instancelocs
+      set: string
+
+  ilocs-builtin:  # [laserEmitter]
+    - meta_scope: string.quoted.double.keyvalues meta.editoritems.iloc-builtin
+    - match: '{{ilocs_builtin}}'
+      scope: constant.language.editoritems.iloc-builtin
+    - match: '[a-zA-Z_0-9]'
+      scope: variable.language.editoritems
+    - match: ']'
+      scope: punctuation.section.mapping.end.editoritems.instancelocs
+      set: string
+    - match: \"
+      scope: invalid.illegal.premature-end
+      pop: true
+

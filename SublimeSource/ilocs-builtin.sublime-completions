@@ -1,0 +1,258 @@
+{
+   "scope": "meta.editoritems.iloc-builtin",
+   "completions":
+   [
+      {
+        "trigger": "black_frame\tbuiltin",
+        "contents": "black_frame]"
+      },
+      {
+        "trigger": "black_frame_coop\tbuiltin",
+        "contents": "black_frame_coop]"
+      },
+      {
+        "trigger": "black_frame_sp\tbuiltin",
+        "contents": "black_frame_sp]"
+      },
+      {
+        "trigger": "coopCorr\tbuiltin",
+        "contents": "coopCorr]"
+      },
+      {
+        "trigger": "coopCorr1\tbuiltin",
+        "contents": "coopCorr1]"
+      },
+      {
+        "trigger": "coopCorr2\tbuiltin",
+        "contents": "coopCorr2]"
+      },
+      {
+        "trigger": "coopCorr3\tbuiltin",
+        "contents": "coopCorr3]"
+      },
+      {
+        "trigger": "coopCorr4\tbuiltin",
+        "contents": "coopCorr4]"
+      },
+      {
+        "trigger": "coopCorrDown\tbuiltin",
+        "contents": "coopCorrDown]"
+      },
+      {
+        "trigger": "coopCorrUp\tbuiltin",
+        "contents": "coopCorrUp]"
+      },
+      {
+        "trigger": "coopEntry\tbuiltin",
+        "contents": "coopEntry]"
+      },
+      {
+        "trigger": "coopEntryDown\tbuiltin",
+        "contents": "coopEntryDown]"
+      },
+      {
+        "trigger": "coopEntryUp\tbuiltin",
+        "contents": "coopEntryUp]"
+      },
+      {
+        "trigger": "coopExit\tbuiltin",
+        "contents": "coopExit]"
+      },
+      {
+        "trigger": "door_frame\tbuiltin",
+        "contents": "door_frame]"
+      },
+      {
+        "trigger": "door_frame_coop\tbuiltin",
+        "contents": "door_frame_coop]"
+      },
+      {
+        "trigger": "door_frame_sp\tbuiltin",
+        "contents": "door_frame_sp]"
+      },
+      {
+        "trigger": "elevatorEntry\tbuiltin",
+        "contents": "elevatorEntry]"
+      },
+      {
+        "trigger": "elevatorExit\tbuiltin",
+        "contents": "elevatorExit]"
+      },
+      {
+        "trigger": "glass_128\tbuiltin",
+        "contents": "glass_128]"
+      },
+      {
+        "trigger": "glass_convex_corner\tbuiltin",
+        "contents": "glass_convex_corner]"
+      },
+      {
+        "trigger": "glass_corner\tbuiltin",
+        "contents": "glass_corner]"
+      },
+      {
+        "trigger": "glass_frames\tbuiltin",
+        "contents": "glass_frames]"
+      },
+      {
+        "trigger": "glass_left_convex_corner\tbuiltin",
+        "contents": "glass_left_convex_corner]"
+      },
+      {
+        "trigger": "glass_left_corner\tbuiltin",
+        "contents": "glass_left_corner]"
+      },
+      {
+        "trigger": "glass_left_short\tbuiltin",
+        "contents": "glass_left_short]"
+      },
+      {
+        "trigger": "glass_left_straight\tbuiltin",
+        "contents": "glass_left_straight]"
+      },
+      {
+        "trigger": "glass_right_convex_corner\tbuiltin",
+        "contents": "glass_right_convex_corner]"
+      },
+      {
+        "trigger": "glass_right_corner\tbuiltin",
+        "contents": "glass_right_corner]"
+      },
+      {
+        "trigger": "glass_right_short\tbuiltin",
+        "contents": "glass_right_short]"
+      },
+      {
+        "trigger": "glass_right_straight\tbuiltin",
+        "contents": "glass_right_straight]"
+      },
+      {
+        "trigger": "glass_short\tbuiltin",
+        "contents": "glass_short]"
+      },
+      {
+        "trigger": "glass_straight\tbuiltin",
+        "contents": "glass_straight]"
+      },
+      {
+        "trigger": "indPan\tbuiltin",
+        "contents": "indPan]"
+      },
+      {
+        "trigger": "indPanCheck\tbuiltin",
+        "contents": "indPanCheck]"
+      },
+      {
+        "trigger": "indPanTimer\tbuiltin",
+        "contents": "indPanTimer]"
+      },
+      {
+        "trigger": "indToggle\tbuiltin",
+        "contents": "indToggle]"
+      },
+      {
+        "trigger": "laserCatcher\tbuiltin",
+        "contents": "laserCatcher]"
+      },
+      {
+        "trigger": "laserEmitter\tbuiltin",
+        "contents": "laserEmitter]"
+      },
+      {
+        "trigger": "laserRelay\tbuiltin",
+        "contents": "laserRelay]"
+      },
+      {
+        "trigger": "spEntry\tbuiltin",
+        "contents": "spEntry]"
+      },
+      {
+        "trigger": "spEntryCorr\tbuiltin",
+        "contents": "spEntryCorr]"
+      },
+      {
+        "trigger": "spEntryCorr1\tbuiltin",
+        "contents": "spEntryCorr1]"
+      },
+      {
+        "trigger": "spEntryCorr2\tbuiltin",
+        "contents": "spEntryCorr2]"
+      },
+      {
+        "trigger": "spEntryCorr3\tbuiltin",
+        "contents": "spEntryCorr3]"
+      },
+      {
+        "trigger": "spEntryCorr4\tbuiltin",
+        "contents": "spEntryCorr4]"
+      },
+      {
+        "trigger": "spEntryCorr5\tbuiltin",
+        "contents": "spEntryCorr5]"
+      },
+      {
+        "trigger": "spEntryCorr6\tbuiltin",
+        "contents": "spEntryCorr6]"
+      },
+      {
+        "trigger": "spEntryCorr7\tbuiltin",
+        "contents": "spEntryCorr7]"
+      },
+      {
+        "trigger": "spEntryCorrDown\tbuiltin",
+        "contents": "spEntryCorrDown]"
+      },
+      {
+        "trigger": "spEntryCorrUp\tbuiltin",
+        "contents": "spEntryCorrUp]"
+      },
+      {
+        "trigger": "spExit\tbuiltin",
+        "contents": "spExit]"
+      },
+      {
+        "trigger": "spExitCorr\tbuiltin",
+        "contents": "spExitCorr]"
+      },
+      {
+        "trigger": "spExitCorr1\tbuiltin",
+        "contents": "spExitCorr1]"
+      },
+      {
+        "trigger": "spExitCorr2\tbuiltin",
+        "contents": "spExitCorr2]"
+      },
+      {
+        "trigger": "spExitCorr3\tbuiltin",
+        "contents": "spExitCorr3]"
+      },
+      {
+        "trigger": "spExitCorr4\tbuiltin",
+        "contents": "spExitCorr4]"
+      },
+      {
+        "trigger": "spExitCorrDown\tbuiltin",
+        "contents": "spExitCorrDown]"
+      },
+      {
+        "trigger": "spExitCorrUp\tbuiltin",
+        "contents": "spExitCorrUp]"
+      },
+      {
+        "trigger": "transitionents\tbuiltin",
+        "contents": "transitionents]"
+      },
+      {
+        "trigger": "white_frame\tbuiltin",
+        "contents": "white_frame]"
+      },
+      {
+        "trigger": "white_frame_coop\tbuiltin",
+        "contents": "white_frame_coop]"
+      },
+      {
+        "trigger": "white_frame_sp\tbuiltin",
+        "contents": "white_frame_sp]"
+      }
+   ]
+}
