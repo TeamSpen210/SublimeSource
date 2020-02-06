@@ -60,9 +60,9 @@ contexts:
         - include: inc_comment
         - match: '{{float}}'
           scope: constant.numeric.float
+        - include: end_pop
         - match: '[a-zA-Z0-9_/\\]+'
           scope: string.unquoted
-        - include: end_pop
         - include: invalid_other
     - include: invalid_other
 
