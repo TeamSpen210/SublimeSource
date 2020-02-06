@@ -90,6 +90,18 @@ contexts:
       scope: constant.numeric.float
       set: require-newline
     # Must be a newline next.
+
+    - match: '(\")\s*(\[)'
+      captures:
+        1: punctuation.definition.string.begin.vmt-value string.quoted.double.vmt-value
+        2: punctuation.section.sequence.begin.vmt-vector punctuation.section.brackets.begin
+      set: vector-value-brack
+    - match: '(\")\s*(\{)'
+      captures:
+        1: punctuation.definition.string.begin.vmt-value string.quoted.double.vmt-value
+        2: punctuation.section.sequence.begin.vmt-vector punctuation.section.braces.begin
+      set: vector-value-brace
+
     - match: '"'
       scope: punctuation.definition.string.begin.vmt-value
       set: quoted-value
@@ -131,3 +143,32 @@ contexts:
       pop: true
     - match: '\w'
       scope: invalid.illegal.stray-char
+
+  # [ 0 0 0 ] value
+  vector-value-brack:
+    - match: '[+-]?([0-9]*[.])?[0-9]+'
+      scope: constant.numeric.float
+    - match: '(])\s*(")'
+      captures:
+        1: punctuation.section.sequence.end.vmt-vector punctuation.section.brackets.end
+        2: punctuation.definition.string.end.vmt-vector string.quoted.double.vmt-value
+      pop: true
+    - match: '[\[\]{}]'
+      scope: invalid.illegal.stray-char
+      pop: true
+    - match: '.'
+      scope: string.quoted.double.vmt-value
+
+  # {0 0.5 0 } value
+  vector-value-brace:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: '[+-]?([0-9]*[.])?[0-9]+'
+      scope: constant.numeric.float
+    - match: '(})\s*(")'
+      captures:
+        1: punctuation.section.sequence.end.vmt-vector punctuation.section.braces.end
+        2: punctuation.definition.string.end.vmt-vector string.quoted.double.vmt-value
+      pop: true
+    - match: '[\[\]{}]'
+      scope: invalid.illegal.stray-char
+      pop: true
