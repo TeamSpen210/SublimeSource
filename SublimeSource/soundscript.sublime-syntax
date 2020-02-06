@@ -1,0 +1,327 @@
+%YAML 1.2
+---
+name: SoundScript
+scope: source.valve.keyvalues.soundscript
+
+variables:
+  channels: CHAN_(AUTO|WEAPON|VOICE|VOICE2|ITEM|BODY|STREAM|REPLACE|STATIC|VOICE_BASE|USER_BASE[0-9]+)
+  # sndlvl_90dB etc.
+  soundlevel: SNDLVL_(NONE|IDLE|STATIC|TALKING|GUNFIRE|((20|25|30|35|40|45|50|55|65|70|80|85|90|95|100|105|110|120|125|130|140|145|150|180)dB))
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues
+      push: comment
+  comment:
+    - meta_scope: comment.line.keyvalues
+    - match: '\n'
+      pop: true
+
+  inc_float:
+    - match: '[+-]?\b([0-9]*([.]))?[0-9]+\b%?'
+      scope: constant.numeric.float
+      captures:
+        2: punctuation.separator.decimal
+
+
+  # Basic block, allows nesting and pops when done.
+  block:
+    - include: inc_comments
+    - meta_scope: meta.block meta.soundscript.operatorstack
+    - match: '}'
+      scope: punctuation.section.block.end.keyvalues
+      pop: true
+    - match: '{'
+      scope: punctuation.section.block.begin.keyvalues
+      push: block
+
+    # Todo: put these in the right place.
+    - match: '("?)(?i:(import_stack))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.control.import
+        3: punctuation.definition.string.end
+
+    - match: '("?)(?i:(update_stack|start_stack|stop_stack))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.control.conditional.case
+        3: punctuation.definition.string.end
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues
+      push: string
+
+    - match: '[^\[\]"{}/]+'
+      scope: string.unquoted.keyvalues
+
+  string:
+    - meta_scope: string.quoted.double.keyvalues
+    - match: \\.
+      scope: constant.character.escape.keyvalues
+    - match: '[+-]?\b([0-9]*([.]))?[0-9]+\b%?'
+      scope: constant.numeric.float
+      captures:
+        2: punctuation.separator.decimal
+    - match: '[+-]?\b[0-9]+\b%?'
+      scope: constant.numeric.integer
+    - match: 'true|false'
+      scope: constant.language.boolean
+
+    - match: '[,]'
+      scope: punctuation.separator.sequence
+
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues
+      pop: true
+
+  main:
+    - include: inc_comments
+
+    # We're looking for the quoted or unquoted script name.
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues string.quoted.double
+      push: quoted-name
+
+    - match: '{|}'
+      scope: invalid.illegal.stray-brace
+
+    - match: '\S'
+      push: unquoted-name
+
+  # The name itself, when quoted.
+  quoted-name:
+    - meta_scope: entity.name.class.soundscript.scriptname meta.path
+    - match: '\.'
+      scope: punctuation.separator.sequence.soundscript.name
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues string.quoted.double
+      set: start-brace
+    - match: '}'
+      scope: invalid.illegal.stray-bracr
+
+  unquoted-name:
+    - meta_scope: entity.name.class.soundscript.scriptname meta.path
+    - match: '\.'
+      scope: punctuation.separator.sequence.soundscript.name
+    - match: '"'
+      scope: invalid.illegal.stray-quote
+      set: start-brace
+    - match: '\n'
+      set: start-brace
+    - match: '}'
+      scope: invalid.illegal.stray-brace
+
+  start-brace:
+    # Expecting { before the main block.
+    - match: '{'
+      scope: punctuation.section.block.begin.keyvalues
+      set: body
+    - match: '.+'
+      scope: invalid.illegal.stray-brace
+
+  # The real main scope, for the inside of a script.
+  body:
+    - meta_scope: meta.class meta.block meta.soundscript.body
+    - match: '}'
+      scope: punctuation.section.block.end.keyvalues
+      pop: true
+    - match: '{'
+      scope: punctuation.section.block.begin.keyvalues
+      push: block
+
+    - match: '("?)(channel)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push: opt-channel
+
+    - match: '("?)(soundlevel)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push: opt-soundlevel
+
+    - match: '("?)(volume)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push: opt-volume
+
+    - match: '("?)(soundentry_version)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push: opt-version
+
+    - match: '("?)(?i:(wave|rndwave))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push:
+        # Either a single wav, or a block of them.
+        - include: inc_comments
+        - match: '{'
+          scope: punctuation.section.braces.begin
+          set: # A block of random ones.
+            - match: '("?)(?i:(wave|rndwave))(\1)?'
+              scope: string.quoted.double
+              captures:
+                1: punctuation.definition.string.begin
+                2: keyword.operator.word
+                3: punctuation.definition.string.end
+              push: opt-wavfile
+            - match: '}'
+              scope: punctuation.section.braces.end
+              pop: true
+        - match: '}'
+          scope: invalid.illegal.stray-brace
+          pop: true
+        - include: opt-wavfile
+
+    - match: '("?)(?i:(operator_stacks))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push:
+        - include: inc_comments
+        - match: '{'
+          scope: punctuation.section.braces.begin
+          set: block
+        - match: '\S'
+          scope: invalid.illegal
+          pop: true
+
+    - match: '("?)[a-zA-Z_0-9]*(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: punctuation.definition.string.end
+
+  # The value for all the options.
+  opt-channel:
+    - include: inc_comments
+    - match: '\n'
+      scope: invalid.illegal.no-value
+      pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: opt-channel-quoted
+    - include: opt-channel-quoted
+
+  opt-channel-quoted:
+    - meta_scope: meta.soundscript.channel
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - match: '{{channels}}'
+      scope: support.constant.soundscript
+    - include: inc_float
+    - match: '[A-Za-z0-9_]'
+      scope: string.other
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
+
+  opt-soundlevel:
+    - include: inc_comments
+    - match: '\n'
+      scope: invalid.illegal.no-value
+      pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: opt-soundlevel-quoted
+    - include: opt-soundlevel-quoted
+
+  opt-soundlevel-quoted:
+    - meta_scope: meta.soundscript.soundlevel
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - match: '{{soundlevel}}'
+      scope: support.constant.soundscript
+    - include: inc_float
+    - match: '[A-Za-z0-9_]'
+      scope: string.other
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
+
+  opt-volume:
+    - include: inc_comments
+    - match: '\n'
+      scope: invalid.illegal.no-value
+      pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: opt-volume-quoted
+    - include: opt-volume-quoted
+
+  opt-volume-quoted:
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - include: inc_float
+    - match: VOL_NORM
+      scope: support.constant.soundscript
+    - match: '[A-Za-z0-9_]'
+      scope: string.other
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
+
+  opt-version:
+    - include: inc_comments
+    - match: '\n'
+      scope: invalid.illegal.no-value
+      pop: true
+    - match: '("?)([0-9]+)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: constant.numeric.integer.decimal.version
+        3: punctuation.definition.string.end
+      pop: true
+
+  opt-wavfile:
+    - include: inc_comments
+      pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: opt-wavfile-quoted
+    - match: '/|\\'
+      scope: punctuation.separator.sequence
+    - match: \.
+      scope: punctuation.terminator
+    - match: .
+      scope: string.other
+
+  opt-wavfile-quoted:
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - match: '//'
+      scope: invalid.illegal.no-comment
+    - include: opt-wavfile

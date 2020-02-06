@@ -1,0 +1,16 @@
+{
+   "scope": "meta.soundscript.channel",
+   "completions":
+   [
+      { "trigger": "CHAN_AUTO\tDefault",           "contents": "CHAN_AUTO" },
+      { "trigger": "CHAN_WEAPON\tWeapons",         "contents": "CHAN_WEAPON" },
+      { "trigger": "CHAN_VOICE\tVoicelines",       "contents": "CHAN_VOICE" },
+      { "trigger": "CHAN_VOICE2\tTF2 Announcer",   "contents": "CHAN_VOICE2" },
+      { "trigger": "CHAN_ITEM\tObjects",           "contents": "CHAN_ITEM" },
+      { "trigger": "CHAN_BODY\tFoley",             "contents": "CHAN_BODY" },
+      { "trigger": "CHAN_STREAM\tCan be delayed",  "contents": "CHAN_STREAM" },
+      { "trigger": "CHAN_REPLACE\tCommands",       "contents": "CHAN_REPLACE" },
+      { "trigger": "CHAN_STATIC\tBG sound",        "contents": "CHAN_STATIC" },
+      { "trigger": "CHAN_VOICE_BASE\tPlayer Chat", "contents": "CHAN_VOICE_BASE" }
+   ]
+}

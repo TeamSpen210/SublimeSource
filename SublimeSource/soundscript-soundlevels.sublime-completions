@@ -1,0 +1,37 @@
+{
+   "scope": "meta.soundscript.soundlevel",
+   "completions":
+   [
+      { "trigger": "SNDLVL_NONE\tInfinite", "contents": "SNDLVL_NONE" },
+      { "trigger": "SNDLVL_20dB\t20dB",     "contents": "SNDLVL_20dB" },
+      { "trigger": "SNDLVL_25dB\t25dB",     "contents": "SNDLVL_25dB" },
+      { "trigger": "SNDLVL_30dB\t30dB",     "contents": "SNDLVL_30dB" },
+      { "trigger": "SNDLVL_35dB\t35dB",     "contents": "SNDLVL_35dB" },
+      { "trigger": "SNDLVL_40dB\t40dB",     "contents": "SNDLVL_40dB" },
+      { "trigger": "SNDLVL_45dB\t45dB",     "contents": "SNDLVL_45dB" },
+      { "trigger": "SNDLVL_50dB\t50dB",     "contents": "SNDLVL_50dB" },
+      { "trigger": "SNDLVL_55dB\t55dB",     "contents": "SNDLVL_55dB" },
+      { "trigger": "SNDLVL_IDLE\t60dB",     "contents": "SNDLVL_IDLE" },
+      { "trigger": "SNDLVL_65dB\t65dB",     "contents": "SNDLVL_65dB" },
+      { "trigger": "SNDLVL_STATIC\t66dB",   "contents": "SNDLVL_STATIC" },
+      { "trigger": "SNDLVL_70dB\t70dB",     "contents": "SNDLVL_70dB" },
+      { "trigger": "SNDLVL_75dB\t75dB",     "contents": "SNDLVL_75dB" },
+      { "trigger": "SNDLVL_NORM\t75dB",     "contents": "SNDLVL_NORM" },
+      { "trigger": "SNDLVL_80dB\t80dB",     "contents": "SNDLVL_80dB" },
+      { "trigger": "SNDLVL_TALKING\t80dB",  "contents": "SNDLVL_TALKING" },
+      { "trigger": "SNDLVL_85dB\t85dB",     "contents": "SNDLVL_85dB" },
+      { "trigger": "SNDLVL_90dB\t90dB",     "contents": "SNDLVL_90dB" },
+      { "trigger": "SNDLVL_95dB\t95dB",     "contents": "SNDLVL_95dB" },
+      { "trigger": "SNDLVL_100dB\t100dB",   "contents": "SNDLVL_100dB" },
+      { "trigger": "SNDLVL_105dB\t105dB",   "contents": "SNDLVL_105dB" },
+      { "trigger": "SNDLVL_110dB\t110dB",   "contents": "SNDLVL_110dB" },
+      { "trigger": "SNDLVL_120dB\t120dB",   "contents": "SNDLVL_120dB" },
+      { "trigger": "SNDLVL_125dB\t125dB",   "contents": "SNDLVL_125dB" },
+      { "trigger": "SNDLVL_130dB\t130dB",   "contents": "SNDLVL_130dB" },
+      { "trigger": "SNDLVL_GUNFIRE\t140dB", "contents": "SNDLVL_GUNFIRE" },
+      { "trigger": "SNDLVL_140dB\t140dB",   "contents": "SNDLVL_140dB" },
+      { "trigger": "SNDLVL_145dB\t145dB",   "contents": "SNDLVL_145dB" },
+      { "trigger": "SNDLVL_150dB\t150dB",   "contents": "SNDLVL_150dB" },
+      { "trigger": "SNDLVL_180dB\t180dB",   "contents": "SNDLVL_180dB" }
+   ]
+}
