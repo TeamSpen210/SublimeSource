@@ -6,11 +6,11 @@ scope: source.valve.fgd
 
 variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
-  helpertypes_arg: (?i:animator|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
+  helpertypes_arg: (?i:animator|autovis|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
   helpertypes_no_arg: (?i:halfgridsnap)
 
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
-  
+
   kvkeywords_no_arg: (?i:readonly|report|important)
   kvkeywords_arg: (?i:group)
   restypes: (?i:model|texture|material)
@@ -41,7 +41,7 @@ contexts:
       captures:
         1: punctuation.definition.string.end.fgd
         2: keyword.operator.arithmetic.fgd.concat
-      push: 
+      push:
         - match: '"'
           scope: punctuation.definition.string.begin.fgd
           pop: true
@@ -57,8 +57,8 @@ contexts:
     - include: inc_string_body
     - meta_scope: string.quoted.double.fgd
     - match: '"'
-      scope: punctuation.definition.string.end.fgd 
-      pop: true 
+      scope: punctuation.definition.string.end.fgd
+      pop: true
 
   inc_float:
     - match: '[+-]?([0-9]*[.])?[0-9]+'
@@ -128,32 +128,32 @@ contexts:
     #   scope: punctuation.definition.string.begin.fgd
     #   push: string
     - match: '(?i:(@)(mapsize))\s*(\()'
-      captures: 
+      captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.mapsize
         2: keyword.other.fgd.mapsize
         3: punctuation.section.parens.begin.fgd.helper
       push: helper-args
 
     - match: '(?i:(@)(include))'
-      captures: 
+      captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.include
         2: keyword.other.fgd.include
-      push: 
+      push:
         - match: '"'
           scope: punctuation.definition.string.begin.fgd
-          set: 
+          set:
             - meta_scope: string.quoted.double.fgd.include
             - match: \\.
               scope: constant.character.escape.fgd
             - match: '"'
               scope: punctuation.definition.string.end.fgd meta.filepath.relative
-              pop: true 
+              pop: true
             # Do it this way so the punctuation is NOT meta.filepath
             - match: .
               scope: meta.filepath.relative
 
     - match: (?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)
-      captures: 
+      captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.entity
       push: entity-header
@@ -169,7 +169,7 @@ contexts:
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.exclude
-      push: 
+      push:
         - match: \[
           scope: punctuation.section.block.begin.fgd
           set:
@@ -200,12 +200,12 @@ contexts:
 
     # Helpers, optionally with args.
     - match: ((?i:base))(\()
-      # Special case - base gets the reference types, so you 
+      # Special case - base gets the reference types, so you
       # can jump to definition.
       captures:
         1: support.type.fgd.helper
         2: punctuation.section.parens.begin.fgd.helper
-      push: 
+      push:
         - match: '{{identifier}}'
           scope: variable.function.fgd.baseref
         - include: helper-args
@@ -251,7 +251,7 @@ contexts:
     - meta_scope: meta.class.fgd
     - include: inc_comments
     - match: '{{identifier}}'
-      scope: entity.name.class.fgd meta.class.fgd.name 
+      scope: entity.name.class.fgd meta.class.fgd.name
     - match: ':'
       scope: punctuation.separator
       set:
@@ -261,8 +261,8 @@ contexts:
             - meta_scope: comment.block.documentation.fgd string.quoted.double.fgd
             - include: inc_string_body
             - match: \"
-              scope: punctuation.definition.string.end.fgd 
-              set: 
+              scope: punctuation.definition.string.end.fgd
+              set:
                 - match: \[
                   scope: punctuation.section.block.begin.fgd.entity
                   set: entity-body
@@ -285,7 +285,7 @@ contexts:
       push: keyvalue_pre_type
     # Complex.
     # Matches: kv_name (type) readonly/report
-    
+
     - match: \]
       scope: punctuation.section.block.end.fgd.entity
       pop: true
@@ -306,7 +306,7 @@ contexts:
       set: keyvalue_type
     - match: \[
       scope: punctuation.section.brackets.begin.fgd
-      set: 
+      set:
         - keyvalue_no_tags
         - unified_tags_brack
     - include: inc_all_invalid
@@ -362,7 +362,7 @@ contexts:
     - match: ':'
       scope: punctuation.separator.fgd.keyvalue-sep
     - match: '\n'
-      pop: true    
+      pop: true
     - match: =
       scope: punctuation.separator.fgd.choices
       set:
@@ -387,14 +387,14 @@ contexts:
     # We MUST have = "name" next.
     - match: \=
       scope: punctuation.separator.fgd
-      set: 
+      set:
         - match: \"
           set:
             - meta_scope: comment.block.documentation.fgd string.quoted.double.fgd
             - include: inc_string_body
             - match: \"
-              scope: punctuation.definition.string.end.fgd 
-              set: 
+              scope: punctuation.definition.string.end.fgd
+              set:
                 - match: \[
                   scope: punctuation.section.block.begin.fgd.autovisgroup
                   set: auto-visgroup-body
@@ -435,7 +435,7 @@ contexts:
     - match: '{{identifier}}'
       scope: variable.language.fgd
       push: s2-group-arg
-        
+
     - match: \]
       scope: punctuation.section.brackets.end.fgd
       pop: true
