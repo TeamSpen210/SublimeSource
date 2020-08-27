@@ -1,0 +1,14 @@
+{
+   "scope": "meta.string.vmt-value",
+   "completions":
+   [
+       {
+           "trigger": "center\tmatrix",
+           "contents": "center ${1:.5} ${2:.5} scale ${3:1} ${4:1} rotate ${5:0} translate ${6:0} ${7:0}"
+       },
+       {
+           "trigger": "matrix",
+           "contents": "center ${1:.5} ${2:.5} scale ${3:1} ${4:1} rotate ${5:0} translate ${6:0} ${7:0}"
+       }
+   ]
+}
