@@ -1,5 +1,5 @@
 name: Keyvalues Options
-scope: source.valve.keyvalues, source.valve.forge-game-data
+scope: source.valve.keyvalues, source.valve.forge-game-data, source.valve.qc
 settings:
   shellVariables:
     - name: TM_COMMENT_START
