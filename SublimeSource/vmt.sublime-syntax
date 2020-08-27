@@ -4,6 +4,9 @@ name: Valve Material Format
 file_extensions: [vmt]
 scope: source.valve.keyvalues.vmt
 
+variables:
+  float: '[+-]?([0-9]*[.])?[0-9]+'
+
 contexts:
   inc_comments:
     - match: '//'
@@ -84,12 +87,14 @@ contexts:
   # $key <here> "value"
   pre_value:
     - meta_scope: vmt.pre_value
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues invalid.illegal.no-value
+      set: comment
     - match: '\n'
       pop: true
-    - match: '[+-]?([0-9]*[.])?[0-9]+'
+    - match: '{{float}}'
       scope: constant.numeric.float
-      set: require-newline
-    # Must be a newline next.
+      set: require-newline # Must be a newline next.
 
     - match: '(\")\s*(\[)'
       captures:
@@ -101,6 +106,11 @@ contexts:
         1: punctuation.definition.string.begin.vmt-value string.quoted.double.vmt-value
         2: punctuation.section.sequence.begin.vmt-vector punctuation.section.braces.begin
       set: vector-value-brace
+    - match: '(\")\s*(center)'
+      captures:
+        1: punctuation.definition.string.begin.vmt-value string.quoted.double.vmt-value
+        2: keyword.other.vmt.matrix
+      set: matrix-value-center
 
     - match: '"'
       scope: punctuation.definition.string.begin.vmt-value
@@ -118,12 +128,12 @@ contexts:
       scope: invalid.illegal.vmt.must-be-quoted
 
   unquoted-value:
-    - meta_scope: string.unquoted.vmt-value
+    - meta_scope: string.unquoted.vmt-value meta.string.vmt-value
     - match: '\n|\s'
       pop: true
 
   quoted-value:
-    - meta_scope: string.quoted.double.vmt-value
+    - meta_scope: string.quoted.double.vmt-value meta.string.vmt-value
     - match: '[-/]'
       scope: punctuation.separator.sequence.file
     - match: '"'
@@ -144,9 +154,9 @@ contexts:
     - match: '\w'
       scope: invalid.illegal.stray-char
 
-  # [ 0 0 0 ] value
+  # [ 0 0 0 ] value. 1-3 for vectors, 16 for a matrix.
   vector-value-brack:
-    - match: '[+-]?([0-9]*[.])?[0-9]+'
+    - match: '{{float}}'
       scope: constant.numeric.float
     - match: '(])\s*(")'
       captures:
@@ -162,7 +172,7 @@ contexts:
   # {0 0.5 0 } value
   vector-value-brace:
     - meta_scope: string.quoted.double.vmt-value
-    - match: '[+-]?([0-9]*[.])?[0-9]+'
+    - match: '{{float}}'
       scope: constant.numeric.float
     - match: '(})\s*(")'
       captures:
@@ -172,3 +182,48 @@ contexts:
     - match: '[\[\]{}]'
       scope: invalid.illegal.stray-char
       pop: true
+
+  # Matrix value, which must be in a certain order.
+  # "center .5 .5 scale 1 1 rotate 0 translate 0 0"
+  matrix-value-common:
+    - match: '({{float}})'
+      scope: constant.numeric.float
+    - match: '"'
+      scope: invalid.illegal.premature-end
+      pop: true
+    - match: '\S.*'
+      scope: invalid.illegal.stray-char
+      pop: true
+
+  matrix-value-center:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: scale
+      scope: keyword.other.vmt
+      set: matrix-value-scale
+    - match: "s(c(a(le?)?)?)?" # Don't error while typing this.
+      scope: keyword.other.vmt
+    - include: matrix-value-common
+
+  matrix-value-scale:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: rotate
+      scope: keyword.other.vmt
+      set: matrix-value-rotate
+    - match: 'r(o(t(a(te?)?)?)?)?'
+    - include: matrix-value-common
+
+  matrix-value-rotate:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: translate
+      scope: keyword.other.vmt
+      set: matrix-value-translate
+    - match: 't(r(a(n(s(l(a(te?)?)?)?)?)?)?)?'
+      scope: keyword.other.vmt
+    - include: matrix-value-common
+
+  matrix-value-translate:
+    - meta_scope: string.quoted.double.vmt-value
+    - match: '"' # Now valid here
+      scope: punctuation.definition.string.end.vmt-value
+      pop: true
+    - include: matrix-value-common
