@@ -57,10 +57,10 @@ contexts:
           scope: invalid.illegal.footer
 
     - match: '[$%]'
-      scope: punctuation.definition.keyword
+      scope: punctuation.definition.variable.begin
       push: unquoted-key
     - match: '[a-zA-Z_0-9]+'
-      scope: keyword.other.vmt.shader_key
+      scope: variable.other.member.vmt.shader-key
       push: pre_value
     - match: '"'
       scope: punctuation.definition.string.begin.vmt_key
@@ -72,13 +72,13 @@ contexts:
       scope: invalid.illegal.other
 
   quoted-key:
-    - meta_scope: keyword.other.vmt.shader_key
+    - meta_scope: variable.other.member.vmt.shader-key
     - match: '"'
       scope: punctuation.definition.string.end.vmt_key
       set: pre_value
 
   unquoted-key:
-    - meta_scope: keyword.other.vmt.shader_key
+    - meta_scope: variable.other.member.vmt.shader-key
     - match: '"'
       scope: invalid.illegal.stray-quote
     - match: '\s'
