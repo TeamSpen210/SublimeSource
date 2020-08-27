@@ -4,9 +4,12 @@ name: SoundScript
 scope: source.valve.keyvalues.soundscript
 
 variables:
+  # All the channels. USER_BASE_4893 is allowed.
   channels: CHAN_(AUTO|WEAPON|VOICE|VOICE2|ITEM|BODY|STREAM|REPLACE|STATIC|VOICE_BASE|USER_BASE[0-9]+)
   # sndlvl_90dB etc.
   soundlevel: SNDLVL_(NONE|IDLE|STATIC|TALKING|GUNFIRE|((20|25|30|35|40|45|50|55|65|70|80|85|90|95|100|105|110|120|125|130|140|145|150|180)dB))
+  # Special characters allowed at the start of a string
+  chars: '[~`!@#$%^&*()?<+>{}]'
 
 contexts:
   inc_comments:
@@ -118,15 +121,17 @@ contexts:
 
   start-brace:
     # Expecting { before the main block.
+    - include: inc_comments
     - match: '{'
       scope: punctuation.section.block.begin.keyvalues
       set: body
-    - match: '.+'
+    - match: '\S+'
       scope: invalid.illegal.stray-brace
 
   # The real main scope, for the inside of a script.
   body:
     - meta_scope: meta.class meta.block meta.soundscript.body
+    - include: inc_comments
     - match: '}'
       scope: punctuation.section.block.end.keyvalues
       pop: true
@@ -214,7 +219,14 @@ contexts:
         1: punctuation.definition.string.begin
         2: punctuation.definition.string.end
 
-  # The value for all the options.
+  # Parse each kind of option value.
+  # We have two for each, an unquoted and quoted version.
+  # We first push the unquoted version on the stack.
+  # If we find the quote, replace it with that version which requires the end to finish.
+  # One includes the other to include the shared options, then overrides whatever
+  # can't be repeated.
+
+  # One or two floats, or the permitted constants.
   opt-channel:
     - include: inc_comments
     - match: '\n'
@@ -233,7 +245,7 @@ contexts:
     - match: '{{channels}}'
       scope: support.constant.soundscript
     - include: inc_float
-    - match: '[A-Za-z0-9_]'
+    - match: '[A-Za-z0-9_]' # For when typing partial constants.
       scope: string.other
     - match: ','
       scope: punctuation.separator.sequence
@@ -267,6 +279,7 @@ contexts:
       scope: invalid.illegal.no-comment
       pop: true
 
+  # Only one constant value here.
   opt-volume:
     - include: inc_comments
     - match: '\n'
@@ -292,6 +305,8 @@ contexts:
       scope: invalid.illegal.no-comment
       pop: true
 
+  # Much simpler, has to be a single number only.
+  # So we can do the whole thing in one regex.
   opt-version:
     - include: inc_comments
     - match: '\n'
@@ -305,16 +320,26 @@ contexts:
         3: punctuation.definition.string.end
       pop: true
 
+  # A sound filename. At the start we can have up to two of the characters.
+  # After that they're illegal.
   opt-wavfile:
     - include: inc_comments
       pop: true
-    - match: '"'
-      scope: punctuation.definition.string.begin string.quoted.double
+    - match: '(")({{chars}}{{chars}}?)?'
+      captures:
+        1: punctuation.definition.string.begin string.quoted.double
+        2: constant.character.soundscript
       set: opt-wavfile-quoted
     - match: '/|\\'
       scope: punctuation.separator.sequence
     - match: \.
       scope: punctuation.terminator
+    - match: '{{chars}}{{chars}}?'
+      scope: constant.character.soundscript
+      set: # Only twice.
+        - match: '{{chars}}'
+          scope: invalid.illegal.no-soundchar
+        - include: opt-wavfile
     - match: .
       scope: string.other
 
@@ -322,6 +347,8 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.end string.quoted.double
       pop: true
+    - match: '{{chars}}'
+      scope: invalid.illegal.no-soundchar
     - match: '//'
       scope: invalid.illegal.no-comment
     - include: opt-wavfile
