@@ -142,13 +142,13 @@ contexts:
     - include: inc_comments
     - match: '"'
       scope: punctuation.definition.string.begin.keyvalues2
-      push: [elem_brace, string]
+      push: [elem_body, elem_brace, string]
 
   elem_brace:
     - include: inc_comments
     - match: '{'
       scope: punctuation.definition.braces.begin punctuation.section.block.begin meta.block
-      set: elem_body
+      pop: 1
 
   elem_body: # The interior of an element.
     - meta_scope: meta.class.kv2-element
@@ -199,6 +199,11 @@ contexts:
         1: storage.type.array
         2: storage.modifier
       set: [array_binary, array_body, array_start, expect_string_end]
+    - match: '(element)(_array)'
+      captures:
+        1: storage.type.array
+        2: storage.modifier
+      set: [array_element, array_start, expect_string_end]
 
     - match: '({{elem_types}})(_array)'
       captures:
@@ -239,7 +244,7 @@ contexts:
     # Anything else is an element type.
     - match: '[a-zA-Z_0-9]+'
       scope: entity.name.element storage.class
-      set: [elem_brace, expect_string_end]
+      set: [elem_body, elem_brace, expect_string_end]
 
   value_binary:
     - match: '[0-9a-fA-F]'
@@ -446,3 +451,41 @@ contexts:
     - match: '(?=\S)'
       set: [array_float4a, array_body]
     - include: inc_array_value
+
+  array_element:  # Super special case. Is both the value and body.
+    - include: inc_comments
+    - match: '(")(element)(")'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin.keyvalues2
+        2: keyword.operator.import
+        3: punctuation.definition.string.end.keyvalues2
+      # "redundant" pop/push of ourselves clears the variant from bad
+      # array_element_comma.
+      set: [array_element, array_element_comma, value_uuid, expect_string]
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues2 string.quoted.double
+      set: [array_element, array_element_comma, array_element_inline]
+    - match: ','
+      scope: invalid.illegal
+    - match: '\]'
+      scope: punctuation.definition.brackets.end
+      pop: true
+
+  array_element_inline:
+    - match: '[a-zA-Z_0-9]+'
+      scope: entity.name.element storage.class
+      set: [elem_body, elem_brace, expect_string_end]
+
+  array_element_comma:
+    - meta_scope: meta.kv2.array
+    - match: ','
+      scope: punctuation.separator.sequence.keyvalues2
+      pop: true
+    - match: '(?=")'
+      pop: 2
+      push:
+        - meta_scope: invalid.illegal
+        - include: array_element
+    - match: '(?=]|")'
+      pop: 1  # If we're ending, pop so array_element can handle.
