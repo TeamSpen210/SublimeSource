@@ -34,8 +34,19 @@ contexts:
   expect_string:
     - include: inc_comments
     - match: '"'
-      scope: punctuation.definition.string.begin.keyvalues2
+      scope: punctuation.definition.string.begin.keyvalues2  string.quoted.double
       pop: true
+    - match: '\S'
+      scope: invalid.illegal
+
+  expect_string_end:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
+      pop: true
+    - match: '\S'
+      scope: invalid.illegal
+
 
   main:
     - match: '<!--'
@@ -138,11 +149,45 @@ contexts:
                   scope: punctuation.definition.brackets.end
                   pop: 1
 
-    - match: '{{elem_types}}'  # Scalar
+    # Scalar types.
+    - match: 'int'
+      scope: storage.type.scalar
+      set: [value_int, expect_string, expect_string]
+    - match: 'float'
+      scope: storage.type.scalar
+      set: [value_float, expect_string, expect_string]
+    - match: '{{elem_types}}'
       scope: storage.type.scalar
       # TODO proper definition instead of 1st string
-      set: [elem_body, string, expect_string, string]
-    - match: '[a-zA-Z_0-9]+'  # Element
+      set: [string, expect_string, expect_string]
+
+    # Anything else is an element type.
+    - match: '[a-zA-Z_0-9]+'
       scope: entity.name.element storage.class
-      set: [elem_brace, string]
+      set: [elem_brace, expect_string_end]
+
+  # Value types:
+  value_int:
+    - match: '"'
+      scope: punctuation.definition.string.end.kv2 string.quoted.double
+      pop: 1
+    - match: '(-)?[0-9]*'
+      scope: constant.numeric.integer.decimal
+      captures:
+        1: keyword.operator.arithmetic
+    - match: '\S'
+      scope: invalid.illegal.non-digit
+
+  value_float:
+    - match: '"'
+      scope: punctuation.definition.string.end.kv2 string.quoted.double
+      pop: 1
+    - match: '([+-])?\b([0-9]*([.]))?[0-9]+\b%?'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        3: punctuation.separator.decimal
+      set: expect_string_end
+    - match: '[^0-9-.]'
+      scope: invalid.illegal.non-digit
 
