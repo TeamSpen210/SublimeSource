@@ -5,15 +5,15 @@ file_extensions: [dmx]
 scope: source.valve.keyvalues2
 
 variables: 
-  elem_types: ''
+  elem_types: '(?i:binary|bool|color|element(?:id)?|float|int|qangle|quaternion|string|time|vector[234]|vmatrix)'
 
 contexts:
   inc_comments:
     - match: '//'
-      scope: punctuation.definition.comment.keyvalues
+      scope: punctuation.definition.comment.keyvalues2
       push: comment
   comment:
-    - meta_scope: comment.line.keyvalues
+    - meta_scope: comment.line.keyvalues2
     - match: '\n'
       pop: true
 
@@ -23,11 +23,18 @@ contexts:
 
 
   string:
-    - meta_scope: string.quoted.double.keyvalues
+    - meta_scope: string.quoted.double.keyvalues2
     - match: \\.
-      scope: constant.character.escape.keyvalues
+      scope: constant.character.escape.keyvalues2
     - match: '"'
-      scope: punctuation.definition.string.end.keyvalues
+      scope: punctuation.definition.string.end.keyvalues2
+      pop: true
+
+  # These are pushed on top of another context, and once found is popped back to that.
+  expect_string:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues2
       pop: true
 
   main:
@@ -92,18 +99,50 @@ contexts:
   expect_elem: # Toplevel, needs an element name.
     - include: inc_comments
     - match: '"'
-      scope: punctuation.definition.string.begin.keyvalues
+      scope: punctuation.definition.string.begin.keyvalues2
       set: [elem_brace, string]
 
   elem_brace:
     - include: inc_comments
     - match: '{'
-      scope: punctuation.definition.braces.begin meta.block
+      scope: punctuation.definition.braces.begin punctuation.section.block.begin meta.block
       set: elem_body
 
   elem_body: # The interior of an element.
     - meta_scope: meta.class.kv2-element
     - include: inc_comments
     - match: '}'
-      scope: punctuation.definition.braces.end
+      scope: punctuation.definition.braces.end punctuation.section.block.end
       pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues2
+      push: [attr_scalar, string]
+
+  attr_scalar:
+    # After an attribute name. We now expect a type + value, or element name & value.
+    - meta_scope: string.quoted.double meta.kv2.typename
+    - include: inc_comments
+    - match: '({{elem_types}})(_array)'  # Array
+      captures:
+        1: storage.type.array
+        2: storage.modifier
+      set:
+        - match: '"'
+          scope: punctuation.definition.string.end.kv2
+          set:
+            - match: '\['
+              scope: punctuation.definition.brackets.begin
+              set:
+                # TODO Arrays
+                - match: '\]'
+                  scope: punctuation.definition.brackets.end
+                  pop: 1
+
+    - match: '{{elem_types}}'  # Scalar
+      scope: storage.type.scalar
+      # TODO proper definition instead of 1st string
+      set: [elem_body, string, expect_string, string]
+    - match: '[a-zA-Z_0-9]+'  # Element
+      scope: entity.name.element storage.class
+      set: [elem_brace, string]
+
