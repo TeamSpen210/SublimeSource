@@ -286,12 +286,12 @@ contexts:
     - meta_scope: meta.kv2.array
     - match: ','
       scope: punctuation.separator.sequence.keyvalues2
-      set: array_body
+      pop: 1
     - match: '"'
       scope: invalid.illegal
       pop: 2  # Treat as a value anyway.
     - match: '(?=])'
-      set: array_body  # If we're ending, pop so array_body can handle.
+      pop: 1  # If we're ending, pop so array_body can handle.
 
   inc_array_value:
     - match: '"'
@@ -304,7 +304,7 @@ contexts:
   array_value_end:
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
-      set: array_comma
+      set: [array_body, array_comma]
     - match: '\S'
       scope: invalid.illegal
 
@@ -335,7 +335,7 @@ contexts:
   array_string:
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
-      push: array_comma
+      push: [array_body, array_comma]
     - match: '.'
       scope: string.quoted.double
     - include: inc_array_value
@@ -345,7 +345,7 @@ contexts:
       scope: constant.numeric.hex
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
-      push: array_comma
+      push: [array_body, array_comma]
     - match: '\S'
       scope: invalid.illegal
     - include: inc_array_value
