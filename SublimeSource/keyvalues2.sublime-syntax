@@ -7,7 +7,7 @@ scope: source.valve.keyvalues2
 variables: 
   elem_types: '(?i:binary|bool|color|element(?:id)?|float|int|qangle|quaternion|string|time|vector[234]|vmatrix)'
   bool_values: '(?i:1|0|yes|no|true|false|y|n|t|f)'
-  float: '([+-])?\b([0-9]*([.]))?[0-9]+\b%?'
+  float: '([+-])?[0-9]*([.])?[0-9]+'
 
 contexts:
   inc_comments:
@@ -64,7 +64,7 @@ contexts:
       scope: constant.numeric.float
       captures:
         1: keyword.operator.arithmetic
-        3: punctuation.separator.decimal
+        2: punctuation.separator.decimal
       pop: true
     - match: '(?=\S)'
       scope: invalid.illegal.non-digit
@@ -168,10 +168,19 @@ contexts:
     # Array types.
     - match: 'int_array'
       scope: storage.type.scalar
-      set: [array_int, array_body, array_start]
+      set: [array_int, array_body, array_start, expect_string_end]
     - match: 'float_array'
       scope: storage.type.scalar
-      set: [array_float, array_body, array_start]
+      set: [array_float, array_body, array_start, expect_string_end]
+    - match: 'vector2_array'
+      scope: storage.type.scalar
+      set: [array_float2a, array_body, array_start, expect_string_end]
+    - match: '(vector3|qangle)_array'
+      scope: storage.type.scalar
+      set: [array_float3a, array_body, array_start, expect_string_end]
+    - match: '(vector4|color|quaternion)_array'
+      scope: storage.type.scalar
+      set: [array_float4a, array_body, array_start, expect_string_end]
 
     - match: '({{elem_types}})(_array)'  # Array
       captures:
@@ -239,7 +248,7 @@ contexts:
     - match: '-'
       scope: string.quoted.double
     - match: '"'
-      scope: punctuation.definition.string.end.keyvalues2
+      scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
       pop: true
     - match: '\S'
       scope: invalid.illegal.non-digit
@@ -301,6 +310,103 @@ contexts:
       scope: constant.numeric.float
       captures:
         1: keyword.operator.arithmetic
-        3: punctuation.separator.decimal
+        2: punctuation.separator.decimal
       push: array_value_end
+    - include: inc_array_value
+
+  # Sadness, we need to manually handle these contexts so we can reset the number seen
+  # when reaching the end.
+  array_float2a:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float2b
+    - include: inc_array_value
+
+  array_float2b:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: [array_float2a, array_value_end]
+    - match: '(?=\S)'
+      set: [array_float2a, array_body]
+    - include: inc_array_value
+
+
+  array_float3a:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float3b
+    - include: inc_array_value
+
+  array_float3b:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float3c
+    - match: '(?=\S)'
+      set: [array_float3a, array_body]
+    - include: inc_array_value
+
+  array_float3c:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: [array_float3a, array_value_end]
+    - match: '(?=\S)'
+      set: [array_float3a, array_body]
+    - include: inc_array_value
+
+
+  array_float4a:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float4b
+    - include: inc_array_value
+
+  array_float4b:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float4c
+    - match: '(?=\S)'
+      set: [array_float4a, array_body]
+    - include: inc_array_value
+
+  array_float4c:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: array_float4d
+    - match: '(?=\S)'
+      set: [array_float4a, array_body]
+    - include: inc_array_value
+
+  array_float4d:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        2: punctuation.separator.decimal
+      set: [array_float4a, array_value_end]
+    - match: '(?=\S)'
+      set: [array_float4a, array_body]
     - include: inc_array_value
