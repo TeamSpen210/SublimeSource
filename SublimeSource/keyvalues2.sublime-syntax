@@ -167,16 +167,16 @@ contexts:
         1: storage.type.array
         2: storage.modifier
       set:
-        - match: '"'
-          scope: punctuation.definition.string.end.kv2
+      - match: '"'
+        scope: punctuation.definition.string.end.kv2
+        set:
+        - match: '\['
+          scope: punctuation.definition.brackets.begin
           set:
-            - match: '\['
-              scope: punctuation.definition.brackets.begin
-              set:
-                # TODO Arrays
-                - match: '\]'
-                  scope: punctuation.definition.brackets.end
-                  pop: true
+          # TODO Arrays
+          - match: '\]'
+            scope: punctuation.definition.brackets.end
+            pop: true
 
     # Scalar types.
     - match: 'int'
