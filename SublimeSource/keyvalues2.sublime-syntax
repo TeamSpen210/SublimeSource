@@ -181,6 +181,9 @@ contexts:
     - match: '(vector4|color|quaternion)_array'
       scope: storage.type.scalar
       set: [array_float4a, array_body, array_start, expect_string_end]
+    - match: 'bool_array'
+      scope: storage.type.scalar
+      set: [array_bool, array_body, array_start, expect_string_end]
 
     - match: '({{elem_types}})(_array)'  # Array
       captures:
@@ -261,7 +264,9 @@ contexts:
 
   # We do this weirdly - put the array body on top of the value, and pop it when inside.
   # That way we can handle commas etc in the same locs.
+  # Add the array meta scope so we can suppress completions between values.
   array_body:
+    - meta_scope: meta.kv2.array
     - include: inc_comments
     - match: '"'
       scope: punctuation.definition.string.begin.keyvalues2 string.quoted.double
@@ -273,6 +278,7 @@ contexts:
       pop: 2 # Array and value context
 
   array_comma:
+    - meta_scope: meta.kv2.array
     - match: ','
       scope: punctuation.separator.sequence.keyvalues2
       set: array_body
@@ -311,6 +317,13 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+      push: array_value_end
+    - include: inc_array_value
+
+  array_bool:
+    - meta_scope: meta.kv2.boolean
+    - match: '{{bool_values}}'
+      scope: constant.language.boolean
       push: array_value_end
     - include: inc_array_value
 
