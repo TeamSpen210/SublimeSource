@@ -5,7 +5,7 @@ file_extensions: [dmx]
 scope: source.valve.keyvalues2
 
 variables: 
-  elem_types: '(?i:binary|bool|color|element(?:id)?|float|int|qangle|quaternion|string|time|vector[234]|vmatrix)'
+  elem_types: '(?i:element(?:id)?|string|vmatrix)'
   bool_values: '(?i:1|0|yes|no|true|false|y|n|t|f)'
   float: '([+-])?[0-9]*([.])?[0-9]+'
 
@@ -171,7 +171,7 @@ contexts:
         1: storage.type.array
         2: storage.modifier
       set: [array_int, array_body, array_start, expect_string_end]
-    - match: '(float)(_array)'
+    - match: '(float|time)(_array)'
       captures:
         1: storage.type.array
         2: storage.modifier
@@ -210,7 +210,7 @@ contexts:
     - match: 'int'
       scope: storage.type.scalar
       set: [expect_string_end, expect_int, expect_string, expect_string_end]
-    - match: 'float'
+    - match: 'float|time'
       scope: storage.type.scalar
       set: [expect_string_end, expect_float, expect_string, expect_string_end]
     - match: 'vector2'
