@@ -7,6 +7,7 @@ scope: source.valve.keyvalues2
 variables: 
   elem_types: '(?i:binary|bool|color|element(?:id)?|float|int|qangle|quaternion|string|time|vector[234]|vmatrix)'
   bool_values: '(?i:1|0|yes|no|true|false|y|n|t|f)'
+  float: '([+-])?\b([0-9]*([.]))?[0-9]+\b%?'
 
 contexts:
   inc_comments:
@@ -59,7 +60,7 @@ contexts:
       pop: true
 
   expect_float:
-    - match: '([+-])?\b([0-9]*([.]))?[0-9]+\b%?'
+    - match: '{{float}}'
       scope: constant.numeric.float
       captures:
         1: keyword.operator.arithmetic
@@ -163,6 +164,15 @@ contexts:
     # After an attribute name. We now expect a type + value, or element name & value.
     - meta_scope: string.quoted.double meta.kv2.typename
     - include: inc_comments
+
+    # Array types.
+    - match: 'int_array'
+      scope: storage.type.scalar
+      set: [array_int, array_body, array_start]
+    - match: 'float_array'
+      scope: storage.type.scalar
+      set: [array_float, array_body, array_start]
+
     - match: '({{elem_types}})(_array)'  # Array
       captures:
         1: storage.type.array
@@ -234,3 +244,63 @@ contexts:
     - match: '\S'
       scope: invalid.illegal.non-digit
 
+  array_start:
+    - include: inc_comments
+    - match: '\['
+      scope: punctuation.definition.brackets.begin
+      pop: true
+
+  # We do this weirdly - put the array body on top of the value, and pop it when inside.
+  # That way we can handle commas etc in the same locs.
+  array_body:
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues2 string.quoted.double
+      pop: true # Back to value context.
+    - match: ','
+      scope: invalid.illegal
+    - match: '\]'
+      scope: punctuation.definition.brackets.end
+      pop: 2 # Array and value context
+
+  array_comma:
+    - match: ','
+      scope: punctuation.separator.sequence.keyvalues2
+      set: array_body
+    - match: '"'
+      scope: invalid.illegal
+      pop: 2  # Treat as a value anyway.
+    - match: '(?=])'
+      set: array_body  # If we're ending, pop so array_body can handle.
+
+  inc_array_value:
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
+      set: array_body
+      # If illegal is found, push the body to handle it.
+    - match: '(?=\S)'
+      push: array_body
+
+  array_value_end:
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
+      set: array_comma
+    - match: '\S'
+      scope: invalid.illegal
+
+  array_int:
+    - match: '(-)?[0-9]*'
+      scope: constant.numeric.integer.decimal
+      captures:
+        1: keyword.operator.arithmetic
+      push: array_value_end
+    - include: inc_array_value
+
+  array_float:
+    - match: '{{float}}'
+      scope: constant.numeric.float
+      captures:
+        1: keyword.operator.arithmetic
+        3: punctuation.separator.decimal
+      push: array_value_end
+    - include: inc_array_value
