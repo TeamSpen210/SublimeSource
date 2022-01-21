@@ -198,6 +198,9 @@ contexts:
     - match: 'binary'
       scope: storage.type.scalar
       set: [value_binary, expect_string, expect_string_end]
+    - match: 'element(id)?'
+      scope: storage.type.scalar
+      set: [value_uuid, expect_string, expect_string_end]
     - match: 'bool'
       scope: storage.type.scalar
       set: [expect_string_end, expect_bool, expect_string, expect_string_end]
@@ -214,6 +217,17 @@ contexts:
   value_binary:
     - match: '[0-9a-fA-F]'
       scope: constant.numeric.hex
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues2
+      pop: true
+    - match: '\S'
+      scope: invalid.illegal.non-digit
+
+  value_uuid:
+    - match: '[0-9a-fA-F]'
+      scope: constant.numeric.hex
+    - match: '-'
+      scope: string.quoted.double
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues2
       pop: true
