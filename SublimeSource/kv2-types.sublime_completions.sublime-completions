@@ -1,0 +1,21 @@
+{
+   "scope": "meta.kv2.typename",
+   "completions":
+   [
+      "binary\t01 02 1F", 
+      "bool \t true|false|1|0|yes|no|t|f|y|n", 
+      "color \t R G B A", 
+      "element", 
+      "elementid", 
+      "float\t3.14", 
+      "int\t42", 
+      "qangle\t90 270 30", 
+      "quaternion\t0.0 0.0 0.0 1.0", 
+      "string\thello world", 
+      "time\t60.0",
+      "vector2\t1 2", 
+      "vector3\t1 2 3", 
+      "vector4\t1 2 3 4", 
+      "vmatrix",
+   ]
+}
