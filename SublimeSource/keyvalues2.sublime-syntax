@@ -1,0 +1,109 @@
+%YAML 1.2
+---
+name: Keyvalues2 (DMX)
+file_extensions: [dmx]
+scope: source.valve.keyvalues2
+
+variables: 
+  elem_types: ''
+
+contexts:
+  inc_comments:
+    - match: '//'
+      scope: punctuation.definition.comment.keyvalues
+      push: comment
+  comment:
+    - meta_scope: comment.line.keyvalues
+    - match: '\n'
+      pop: true
+
+  inc_header:
+    - match: '\n.*'
+      scope: invalid.illegal.header
+
+
+  string:
+    - meta_scope: string.quoted.double.keyvalues
+    - match: \\.
+      scope: constant.character.escape.keyvalues
+    - match: '"'
+      scope: punctuation.definition.string.end.keyvalues
+      pop: true
+
+  main:
+    - match: '<!--'
+      scope: keyword.other.namespace
+      set: header_dmx
+    - include: inc_header
+
+  header_dmx:
+    - match: 'dmx'
+      scope: keyword.declaration.namespace
+      set: header_encoding
+    - match: 'DMXVersion'
+      scope: keyword.declaration.namespace
+    - include: inc_header
+
+  header_encoding:
+    - match: '\s+encoding'
+      scope: keyword.declaration.namespace
+      set: header_encoding_value
+    - include: inc_header
+
+  header_encoding_value:
+    - match: '(unicode\_)?keyvalues2'
+      scope: keyword.declaration.namespace
+      set: header_encoding_version
+    - match: '\s+[a-z0-9_]+'
+      scope: string.unquoted
+      set: header_encoding_version
+    - include: inc_header
+
+  header_encoding_version:
+    - match: '\s+[0-9]+'
+      scope: constant.numeric.integer
+      set: header_format
+    - include: inc_header
+
+  header_format:
+    - match: '\s+format'
+      scope: keyword.declaration.namespace
+      set: header_format_value
+    - include: inc_header
+
+  header_format_value:
+    - match: '\s+[a-z0-9_]+'
+      scope: string.unquoted
+      set: header_format_version
+    - include: inc_header
+
+  header_format_version:
+    - match: '\s+[0-9]+'
+      scope: constant.numeric.integer
+      set: header_ending
+    - include: inc_header
+
+  header_ending:
+    - match: '-->'
+      scope: keyword.other.namespace
+      set: expect_elem
+    - include: inc_header
+
+  expect_elem: # Toplevel, needs an element name.
+    - include: inc_comments
+    - match: '"'
+      scope: punctuation.definition.string.begin.keyvalues
+      set: [elem_brace, string]
+
+  elem_brace:
+    - include: inc_comments
+    - match: '{'
+      scope: punctuation.definition.braces.begin meta.block
+      set: elem_body
+
+  elem_body: # The interior of an element.
+    - meta_scope: meta.class.kv2-element
+    - include: inc_comments
+    - match: '}'
+      scope: punctuation.definition.braces.end
+      pop: true
