@@ -1,0 +1,16 @@
+{
+   "scope": "meta.kv2.boolean",
+   "completions":
+   [
+      "true\tTrue",
+      "t\tTrue",
+      "yes\tTrue",
+      "y\tTrue",
+      "1\tTrue",
+      "false\tFalse",
+      "f\tFalse",
+      "no\tFalse",
+      "n\tFalse",
+      "0\tFalse",
+   ]
+}

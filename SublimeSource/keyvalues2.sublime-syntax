@@ -70,6 +70,7 @@ contexts:
       pop: true
 
   expect_bool:
+    - meta_scope: meta.kv2.boolean
     - match: '{{bool_values}}'
       scope: constant.language.boolean
       pop: true
