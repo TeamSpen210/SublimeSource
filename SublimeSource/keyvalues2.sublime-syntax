@@ -1,7 +1,7 @@
 %YAML 1.2
 ---
 name: Keyvalues2 (DMX)
-file_extensions: [dmx]
+file_extensions: [dmx, pcf]
 scope: source.valve.keyvalues2
 
 variables: 
@@ -102,7 +102,7 @@ contexts:
     - match: '(unicode\_)?keyvalues2'
       scope: keyword.declaration.namespace
       set: header_encoding_version
-    - match: '\s+[a-z0-9_]+'
+    - match: '\s+[a-zA-Z0-9_]+'
       scope: string.unquoted
       set: header_encoding_version
     - include: inc_header
@@ -120,7 +120,7 @@ contexts:
     - include: inc_header
 
   header_format_value:
-    - match: '\s+[a-z0-9_]+'
+    - match: '\s+[a-zA-Z0-9_]+'
       scope: string.unquoted
       set: header_format_version
     - include: inc_header
