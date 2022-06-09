@@ -22,7 +22,7 @@ contexts:
   # The shader name first!
   main:
     - include: inc_comments
-    - match: '[a-zA-Z_]+'
+    - match: '[a-zA-Z_0-9]+'
       scope: entity.name.class.vmt.shader
       push: expect-start-brace
     - match: '"'
