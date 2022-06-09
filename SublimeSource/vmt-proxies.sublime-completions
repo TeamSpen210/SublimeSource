@@ -1,0 +1,421 @@
+{
+  "scope": "meta.vmt.proxy-block",
+  "completions": [
+    {
+      "trigger": "Add\tProxy",
+      "contents": "Add\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "Multiply\tProxy",
+      "contents": "Multiply\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "Subtract\tProxy",
+      "contents": "Subtract\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "Divide\tProxy",
+      "contents": "Divide\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "Equals\tProxy",
+      "contents": "Equals\n\t{\n\tsrcVar1 $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "Abs\tProxy",
+      "contents": "Abs\n\t{\n\tsrcVar1 $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "Frac\tProxy",
+      "contents": "Frac\n\t{\n\tsrcVar1 $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "Int\tProxy",
+      "contents": "Int\n\t{\n\tsrcVar1 $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "Clamp\tProxy",
+      "contents": "Clamp\n\t{\n\tmin $1\n\tmax $2\n\tsrcVar1 $3\n\tresultVar $4\n\t}"
+    },
+    {
+      "trigger": "LessOrEqual\tProxy",
+      "contents": "LessOrEqual\n\t{\n\tlessEqualVar $1\n\tgreaterVar $2\n\tsrcVar1 $3\n\tsrcVar2 $4\n\t}"
+    },
+    {
+      "trigger": "SelectFirstIfNonZero\tProxy",
+      "contents": "SelectFirstIfNonZero\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "WrapMinMax\tProxy",
+      "contents": "WrapMinMax\n\t{\n\tsrcVar1 $1\n\tminVal $2\n\tmaxVal $3\n\tresultVar $4\n\t}"
+    },
+    {
+      "trigger": "Exponential\tProxy",
+      "contents": "Exponential\n\t{\n\tminVal $1\n\tmaxVal $2\n\tsrcVar1 $3\n\toffset $4\n\tscale $5\n\tresultVar $6\n\t}"
+    },
+    {
+      "trigger": "Sine\tProxy",
+      "contents": "Sine\n\t{\n\tsineperiod $1\n\tsinemin $2\n\tsinemax $3\n\ttimeoffset $4\n\tresultVar $5\n\t}"
+    },
+    {
+      "trigger": "LinearRamp\tProxy",
+      "contents": "LinearRamp\n\t{\n\trate $1\n\tinitialValue $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "CurrentTime\tProxy",
+      "contents": "CurrentTime\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "UniformNoise\tProxy",
+      "contents": "UniformNoise\n\t{\n\tminVal $1\n\tmaxVal $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "GaussianNoise\tProxy",
+      "contents": "GaussianNoise\n\t{\n\tmean $1\n\thalfWidth $2\n\tminVal $3\n\tmaxVal $4\n\tresultVar $5\n\t}"
+    },
+    {
+      "trigger": "MatrixRotate\tProxy",
+      "contents": "MatrixRotate\n\t{\n\taxisVar $1\n\tangle $2\n\tresultVar $3\n\t}"
+    },
+    {
+      "trigger": "Alpha\tProxy",
+      "contents": "Alpha\n\t{\n\t}"
+    },
+    {
+      "trigger": "Cycle\tProxy",
+      "contents": "Cycle\n\t{\n\tstart $1\n\tend $2\n\teasein $3\n\teaseout $4\n\tresultVar $5\n\t}"
+    },
+    {
+      "trigger": "PlayerProximity\tProxy",
+      "contents": "PlayerProximity\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerTeamMatch\tProxy",
+      "contents": "PlayerTeamMatch\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "PlayerView\tProxy",
+      "contents": "PlayerView\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerSpeed\tProxy",
+      "contents": "PlayerSpeed\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerPosition\tProxy",
+      "contents": "PlayerPosition\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "EntitySpeed\tProxy",
+      "contents": "EntitySpeed\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "EntityOrigin\tProxy",
+      "contents": "EntityOrigin\n\t{\n\t}"
+    },
+    {
+      "trigger": "EntityRandom\tProxy",
+      "contents": "EntityRandom\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "Health\tProxy",
+      "contents": "Health\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "IsNPC\tProxy",
+      "contents": "IsNPC\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "WorldDims\tProxy",
+      "contents": "WorldDims\n\t{\n\t}"
+    },
+    {
+      "trigger": "AnimatedTexture\tProxy",
+      "contents": "AnimatedTexture\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\t}"
+    },
+    {
+      "trigger": "AnimatedEntityTexture\tProxy",
+      "contents": "AnimatedEntityTexture\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\t}"
+    },
+    {
+      "trigger": "AnimatedOffsetTexture\tProxy",
+      "contents": "AnimatedOffsetTexture\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\t}"
+    },
+    {
+      "trigger": "AnimteSpecificTexture\tProxy",
+      "contents": "AnimteSpecificTexture\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\tonlyAnimateOnTexture $4\n\t}"
+    },
+    {
+      "trigger": "Pupil\tProxy",
+      "contents": "Pupil\n\t{\n\ttextureVar $1\n\ttextureFrameNumVar $2\n\tpupilCloseRate $3\n\tpupilOpenRate $4\n\t}"
+    },
+    {
+      "trigger": "TextureTransform\tProxy",
+      "contents": "TextureTransform\n\t{\n\tcenterVar $1\n\tscaleVar $2\n\trotateVar $3\n\ttranslateVar $4\n\tresultVar $5\n\t}"
+    },
+    {
+      "trigger": "TextureScroll\tProxy",
+      "contents": "TextureScroll\n\t{\n\ttextureScrollVar $1\n\ttextureScrollRate $2\n\ttextureScrollAngle $3\n\t}"
+    },
+    {
+      "trigger": "LampBeam\tProxy",
+      "contents": "LampBeam\n\t{\n\t}"
+    },
+    {
+      "trigger": "LampHalo\tProxy",
+      "contents": "LampHalo\n\t{\n\t}"
+    },
+    {
+      "trigger": "CustomSteamImageOnModel\tProxy",
+      "contents": "CustomSteamImageOnModel\n\t{\n\t}"
+    },
+    {
+      "trigger": "MaterialModify\tProxy",
+      "contents": "MaterialModify\n\t{\n\t}"
+    },
+    {
+      "trigger": "MaterialModifyAnimated\tProxy",
+      "contents": "MaterialModifyAnimated\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\t}"
+    },
+    {
+      "trigger": "WaterLOD\tProxy",
+      "contents": "WaterLOD\n\t{\n\t}"
+    },
+    {
+      "trigger": "BreakableSurface\tProxy",
+      "contents": "BreakableSurface\n\t{\n\t}"
+    },
+    {
+      "trigger": "ConveyorScroll\tProxy",
+      "contents": "ConveyorScroll\n\t{\n\ttextureScrollVar $1\n\t}"
+    },
+    {
+      "trigger": "Camo\tProxy",
+      "contents": "Camo\n\t{\n\t}"
+    },
+    {
+      "trigger": "FleshInterior\tProxy",
+      "contents": "FleshInterior\n\t{\n\t}"
+    },
+    {
+      "trigger": "HeliBlade\tProxy",
+      "contents": "HeliBlade\n\t{\n\t}"
+    },
+    {
+      "trigger": "ParticleSphereProxy\tProxy",
+      "contents": "ParticleSphereProxy\n\t{\n\t}"
+    },
+    {
+      "trigger": "PlayerLogo\tProxy",
+      "contents": "PlayerLogo\n\t{\n\t}"
+    },
+    {
+      "trigger": "Shadow\tProxy",
+      "contents": "Shadow\n\t{\n\t}"
+    },
+    {
+      "trigger": "ShadowModel\tProxy",
+      "contents": "ShadowModel\n\t{\n\t}"
+    },
+    {
+      "trigger": "ToggleTexture\tProxy",
+      "contents": "ToggleTexture\n\t{\n\ttoggleTextureVar $1\n\ttoggleTextureFrameNumVar $2\n\ttoggleShouldWrap $3\n\t}"
+    },
+    {
+      "trigger": "Empty\tProxy",
+      "contents": "Empty\n\t{\n\t}"
+    },
+    {
+      "trigger": "Dummy\tProxy",
+      "contents": "Dummy\n\t{\n\t}"
+    },
+    {
+      "trigger": "ConVar\tProxy",
+      "contents": "ConVar\n\t{\n\tconvar $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "EntityOriginAlyx\tProxy",
+      "contents": "EntityOriginAlyx\n\t{\n\t}"
+    },
+    {
+      "trigger": "Ep1IntroVortRefract\tProxy",
+      "contents": "Ep1IntroVortRefract\n\t{\n\t}"
+    },
+    {
+      "trigger": "VortEmissive\tProxy",
+      "contents": "VortEmissive\n\t{\n\t}"
+    },
+    {
+      "trigger": "Shield\tProxy",
+      "contents": "Shield\n\t{\n\ttextureScrollVar $1\n\ttextureScrollRate $2\n\ttextureScrollAngle $3\n\t}"
+    },
+    {
+      "trigger": "PlayerHealth\tProxy",
+      "contents": "PlayerHealth\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerDamageTime\tProxy",
+      "contents": "PlayerDamageTime\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerHealTime\tProxy",
+      "contents": "PlayerHealTime\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "PlayerScore\tProxy",
+      "contents": "PlayerScore\n\t{\n\tscale $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "spy_invis\tProxy",
+      "contents": "spy_invis\n\t{\n\t}"
+    },
+    {
+      "trigger": "weapon_invis\tProxy",
+      "contents": "weapon_invis\n\t{\n\t}"
+    },
+    {
+      "trigger": "vm_invis\tProxy",
+      "contents": "vm_invis\n\t{\n\t}"
+    },
+    {
+      "trigger": "invis\tProxy",
+      "contents": "invis\n\t{\n\t}"
+    },
+    {
+      "trigger": "building_invis\tProxy",
+      "contents": "building_invis\n\t{\n\t}"
+    },
+    {
+      "trigger": "CommunityWeapon\tProxy",
+      "contents": "CommunityWeapon\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "InvulnLevel\tProxy",
+      "contents": "InvulnLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "BurnLevel\tProxy",
+      "contents": "BurnLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "YellowLevel\tProxy",
+      "contents": "YellowLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "ModelGlowColor\tProxy",
+      "contents": "ModelGlowColor\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "ItemTintColor\tProxy",
+      "contents": "ItemTintColor\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "BuildingRescueLevel\tProxy",
+      "contents": "BuildingRescueLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "TeamTexture\tProxy",
+      "contents": "TeamTexture\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "AnimatedWeaponSheen\tProxy",
+      "contents": "AnimatedWeaponSheen\n\t{\n\tanimatedtexturevar $1\n\tanimatedtextureframenumvar $2\n\tanimatedtextureframerate $3\n\t}"
+    },
+    {
+      "trigger": "WeaponSkin\tProxy",
+      "contents": "WeaponSkin\n\t{\n\t}"
+    },
+    {
+      "trigger": "ShieldFalloff\tProxy",
+      "contents": "ShieldFalloff\n\t{\n\t}"
+    },
+    {
+      "trigger": "StatTrakIllum\tProxy",
+      "contents": "StatTrakIllum\n\t{\n\t}"
+    },
+    {
+      "trigger": "StatTrakDigit\tProxy",
+      "contents": "StatTrakDigit\n\t{\n\t}"
+    },
+    {
+      "trigger": "StatTrakIcon\tProxy",
+      "contents": "StatTrakIcon\n\t{\n\t}"
+    },
+    {
+      "trigger": "StickybombGlowColor\tProxy",
+      "contents": "StickybombGlowColor\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "SniperRifleCharge\tProxy",
+      "contents": "SniperRifleCharge\n\t{\n\t}"
+    },
+    {
+      "trigger": "Heartbeat\tProxy",
+      "contents": "Heartbeat\n\t{\n\t}"
+    },
+    {
+      "trigger": "PlayerTeam\tProxy",
+      "contents": "PlayerTeam\n\t{\n\tteam $1\n\tresultVar $2\n\t}"
+    },
+    {
+      "trigger": "BloodyHands\tProxy",
+      "contents": "BloodyHands\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "IT\tProxy",
+      "contents": "IT\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "BurnLevel\tProxy",
+      "contents": "BurnLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "BBQLevel\tProxy",
+      "contents": "BBQLevel\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "NightVisionSelfIllum\tProxy",
+      "contents": "NightVisionSelfIllum\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "AlienSurfaceFX\tProxy",
+      "contents": "AlienSurfaceFX\n\t{\n\ttextureScrollVar $1\n\t}"
+    },
+    {
+      "trigger": "PortalOpenAmount\tProxy",
+      "contents": "PortalOpenAmount\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "PortalStatic\tProxy",
+      "contents": "PortalStatic\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "FizzlerVortex\tProxy",
+      "contents": "FizzlerVortex\n\t{\n\t}"
+    },
+    {
+      "trigger": "WheatlyEyeGlow\tProxy",
+      "contents": "WheatlyEyeGlow\n\t{\n\t}"
+    },
+    {
+      "trigger": "Lightedmouth\tProxy",
+      "contents": "Lightedmouth\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "LightedFloorButton\tProxy",
+      "contents": "LightedFloorButton\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "TractorBeam\tProxy",
+      "contents": "TractorBeam\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "TauCharge\tProxy",
+      "contents": "TauCharge\n\t{\n\tresultVar $1\n\t}"
+    },
+    {
+      "trigger": "SurvivalTeammate\tProxy",
+      "contents": "SurvivalTeammate\n\t{\n\tresultVar $1\n\t}"
+    }
+  ]
+}
