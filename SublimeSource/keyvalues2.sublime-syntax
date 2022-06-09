@@ -140,8 +140,13 @@ contexts:
   expect_elem: # Toplevel, needs an element name.
     - include: inc_comments
     - match: '"'
-      scope: punctuation.definition.string.begin.keyvalues2
-      push: [elem_body, elem_brace, string]
+      scope: punctuation.definition.string.begin.keyvalues2 string.quoted.double
+      push: elem_name
+
+  elem_name:
+    - match: '[a-zA-Z_0-9]+'
+      scope: entity.name.element storage.class
+      set: [elem_body, elem_brace, expect_string_end]
 
   elem_brace:
     - include: inc_comments
@@ -574,17 +579,12 @@ contexts:
       set: [array_element, array_element_comma, value_uuid, expect_string]
     - match: '"'
       scope: punctuation.definition.string.begin.keyvalues2 string.quoted.double
-      set: [array_element, array_element_comma, array_element_inline]
+      set: [array_element, array_element_comma, elem_name]
     - match: ','
       scope: invalid.illegal
     - match: '\]'
       scope: punctuation.definition.brackets.end
       pop: true
-
-  array_element_inline:
-    - match: '[a-zA-Z_0-9]+'
-      scope: entity.name.element storage.class
-      set: [elem_body, elem_brace, expect_string_end]
 
   array_element_comma:
     - meta_scope: meta.kv2.array
