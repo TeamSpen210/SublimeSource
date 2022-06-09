@@ -281,7 +281,7 @@ contexts:
         - meta_scope: variable.other.member.vmt.shader-key
         - match: '"'
           scope: punctuation.definition.string.end.vmt_key
-          set: proxy-quoted-value
+          set: proxy-value
         - match: \n
           scope: invalid.illegal
           pop: true
@@ -315,6 +315,3 @@ contexts:
           scope: invalid.illegal
           pop: true
     - include: pre_value
-
-  proxy-quoted-value:
-    - include: quoted-value
