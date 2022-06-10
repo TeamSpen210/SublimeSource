@@ -20,7 +20,8 @@ contexts:
     - meta_scope: comment.line.double-slash.fgd
     - match: \)
       scope: comment.line.double-slash.fgd
-    - match: \n
+    # Lookahead, so whatever actual syntax still matches the newline.
+    - match: '(?=\n)'
       pop: true
 
   inc_string:

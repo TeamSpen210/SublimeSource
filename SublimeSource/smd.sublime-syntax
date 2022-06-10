@@ -68,7 +68,8 @@ contexts:
 
   comment:
     - meta_scope: comment.line.qc
-    - match: '\n'
+    # Lookahead, so whatever actual syntax still matches the newline.
+    - match: '(?=\n)'
       pop: true
 
   end_pop:

@@ -15,7 +15,8 @@ contexts:
       push: comment
   comment:
     - meta_scope: comment.line.keyvalues2
-    - match: '\n'
+    # Lookahead, so whatever actual syntax still matches the newline.
+    - match: '(?=\n)'
       pop: true
 
   inc_header:
