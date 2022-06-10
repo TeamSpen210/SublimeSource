@@ -7,12 +7,12 @@ scope: source.valve.keyvalues.soundscape
 variables:
   float: '[+-]?([0-9]*[.])?[0-9]+'
   identifier: '[A-Za-z\_\.0-9]+'
-  sound_chars: '[*#@<>^()}$!?]'
+  chars: '[~`!@#$%^&*()?<+>{}]'
   # Soundlevels.
   soundlevel: 'SNDLVL_(?:NONE|NORM|TALKING|GUNFIRE|(?i:[0-9]+dB))'
 
 contexts:
-  prototype:
+  inc_comments:
     - match: //
       scope: punctuation.definition.comment.begin.fgd comment.line.double-slash
       push: comment
@@ -51,6 +51,7 @@ contexts:
       scope: constant.numeric.float
 
   main:
+    - include: inc_comments
     - match: '("?)({{identifier}})(\1)'
       captures:
         1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
@@ -122,22 +123,42 @@ contexts:
       scope: invalid.illegal.newline
     - include: inc_all_invalid
 
-  # A quoted filename, with the sound characters beforehand.
+  # A sound filename. At the start we can have up to two of the characters.
+  # After that they're illegal.
   value_sound:
     - include: inc_comments
-    - match: '(")({{sound_chars}}{0,2})([a-zA-Z0-9_.\\/]+)(\1)'
+      pop: true
+    - match: '(")({{chars}}{{chars}}?)?'
       captures:
         1: punctuation.definition.string.begin string.quoted.double
-        2: keyword.operator.soundscape
-        3: string.soundscape.file
-        4: punctuation.definition.string.end string.quoted.double
+        2: constant.character.soundscape
+      set: value_sound_quoted
+    - match: '/|\\'
+      scope: punctuation.separator.sequence
+    - match: \.
+      scope: punctuation.terminator
+    - match: '{{chars}}{{chars}}?'
+      scope: constant.character.soundscape
+      set: # Only twice.
+        - match: '{{chars}}'
+          scope: invalid.illegal.no-soundchar
+        - include: value_sound
+    - match: .
+      scope: string.other
+
+  value_sound_quoted:
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
       pop: true
-    - match: \n
-      scope: invalid.illegal.newline
-    - include: inc_all_invalid
+    - match: '{{chars}}'
+      scope: invalid.illegal.no-soundchar
+    - match: '//'
+      scope: invalid.illegal.no-comment
+    - include: value_sound
 
   # Inside a scape, allowing each rule.
   expect_rule:
+    - include: inc_comments
     - meta_scope: meta.block
     - match: \}
       scope: punctuation.section.block.end
@@ -200,6 +221,7 @@ contexts:
       push: value_string
 
   rule_common:
+    - include: inc_comments
     - match: '("?)((?i:volume|time|attenuation|origin))(\1)'
       captures:
         1: punctuation.definition.string.begin.soundscape.operator string.quoted.double
