@@ -39,7 +39,7 @@
     },
     {
       "trigger": "LessOrEqual\tProxy",
-      "contents": "LessOrEqual\n\t{\n\tlessEqualVar $1\n\tgreaterVar $2\n\tsrcVar1 $3\n\tsrcVar2 $4\n\t}"
+      "contents": "LessOrEqual\n\t{\n\tsrcVar1 $1\n\tsrcVar2 $2\n\tlessEqualVar $3\n\tgreaterVar $4\n\tresultVar $5\n\t}"
     },
     {
       "trigger": "SelectFirstIfNonZero\tProxy",
