@@ -198,20 +198,20 @@ contexts:
           scope: punctuation.section.block.begin.soundscape.rule
           set: rule_playsoundscape
         - include: inc_all_invalid
-        
-    - match: '("?)((?i:dsp|dsp_volume))(\1)'
-      captures:
-        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
-        2: variable.language.soundscape.rule
-        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
-      push: value_integer
-        
-    - match: '("?)((?i:fadetime))(\1)'
+
+    - match: '("?)((?i:fadetime|dsp_volume))(\1)'
       captures:
         1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
         2: variable.language.soundscape.rule
         3: punctuation.definition.string.end.soundscape.rule string.quoted.double
       push: value_float
+
+    - match: '("?)((?i:dsp|dsp_spatial))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: variable.language.soundscape.rule
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: value_integer
         
     - match: '("?)((?i:soundmixer))(\1)'
       captures:
