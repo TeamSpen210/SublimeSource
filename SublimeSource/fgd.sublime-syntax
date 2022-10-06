@@ -6,7 +6,7 @@ scope: source.valve.fgd
 
 variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
-  helpertypes_arg: (?i:animator|autovis|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
+  helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
   helpertypes_no_arg: (?i:halfgridsnap)
 
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
@@ -14,6 +14,7 @@ variables:
   kvkeywords_no_arg: (?i:readonly|report|important)
   kvkeywords_arg: (?i:group)
   restypes: (?i:model|texture|material)
+  srctools_filetypes: (?i:choreo|entity|file|mat|material|mdl|model|particle|scene|snd|sound|tex|texture|vscript_squirrel)
 
 
 contexts:
@@ -64,6 +65,44 @@ contexts:
   inc_float:
     - match: '[+-]?([0-9]*[.])?[0-9]+'
       scope: constant.numeric.float
+
+  expect_openblock:
+    - match: \[
+      scope: punctuation.section.block.begin.fgd
+      pop: true
+    - include: inc_comments
+    - include: inc_all_invalid
+
+  # Next should be a string.
+  expect_string:
+    - match: '"'
+      scope: punctuation.definition.string.begin.fgd
+      set: string
+    - match: '{{identifier}}'
+      scope: string.unquoted.fgd
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fgd
+      pop: true
+    - include: inc_all_invalid
+
+  # Next is a possibly quoted classname reference
+  expect_classref:
+    - match: '"'
+      scope: punctuation.definition.string.begin.fgd
+      set:
+        - include: inc_string_body
+        - meta_scope: variable.function.fgd.classref
+        - match: '"'
+          scope: punctuation.definition.string.end.fgd
+          pop: true
+    - match: '{{identifier}}'
+      scope: variable.function.fgd.classref
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fgd
+      pop: true
+    - include: inc_all_invalid
 
   unified_tags_paren:
     - include: inc_comments
@@ -200,7 +239,7 @@ contexts:
 
 
     # Helpers, optionally with args.
-    - match: ((?i:base))(\()
+    - match: ((?i:base|aliasof))(\()
       # Special case - base gets the reference types, so you
       # can jump to definition.
       captures:
@@ -267,6 +306,7 @@ contexts:
                 - match: \[
                   scope: punctuation.section.block.begin.fgd.entity
                   set: entity-body
+                - include: inc_comments
                 - include: inc_all_invalid
         - include: inc_all_invalid
     - match: \[
@@ -281,6 +321,15 @@ contexts:
     - match: (input|output)
       scope: storage.type.fgd.io
       push: io_name
+    - match: (?i:(@)(resources))
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.exclude
+      push: [src_resourceblock, expect_openblock]
+
+    - match: '@'
+      scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
+
     - match: ({{identifier}})
       scope: variable.other.member.fgd.keyvalue
       push: keyvalue_pre_type
@@ -469,3 +518,45 @@ contexts:
       scope: invalid.illegal.fgd
       pop: true
     - include: inc_all_invalid
+
+  src_resourceblock:
+    - include: inc_comments
+    - match: \[
+      scope: invalid.illegal.fgd
+      pop: true
+    - match: 'func'
+      scope: keyword.declaration.function.fgd
+      push: expect_string
+    - match: 'entity'
+      scope: keyword.declaration.class.fgd
+      push: [maybe_resblock_tags, expect_classref]
+    - match: '{{srctools_filetypes}}\b'
+      scope: storage.type.fgd
+      push: [maybe_resblock_tags, expect_string]
+    - match: '{{identifier}}\b'
+      scope: variable.other.fgd
+      push: [maybe_resblock_tags, expect_string]
+    - match: \]
+      scope: punctuation.section.block.end.fgd
+      pop: true
+    - include: inc_all_invalid
+
+  maybe_resblock_tags:
+    - match: \[
+      scope: punctuation.section.brackets.begin.fgd
+      set:
+        - match: '([-+])?({{identifier}})?(,)?'
+          captures:
+            1: keyword.operator.comparison.fgd
+            2: variable.annotation.fgd
+            3: punctuation.separator.sequence.fgd
+        - match: \[
+          scope: invalid.illegal.fgd
+          pop: true
+        - match: \]
+          scope: punctuation.section.brackets.end.fgd
+          pop: true
+        - include: inc_all_invalid
+    - match: '(?!\s|\[)'
+      # Pop if anything else is seen, but don't consume those.
+      pop: true
