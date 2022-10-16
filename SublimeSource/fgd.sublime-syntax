@@ -14,7 +14,7 @@ variables:
   kvkeywords_no_arg: (?i:readonly|report|important)
   kvkeywords_arg: (?i:group)
   restypes: (?i:model|texture|material)
-  srctools_filetypes: (?i:choreo|entity|file|mat|material|mdl|model|particle|scene|snd|sound|tex|texture|vscript_squirrel)
+  srctools_filetypes: (?i:break_chunk|choreo|entity|file|mat|material|mdl|model|particle|scene|snd|sound|tex|texture|vscript_squirrel)
 
 
 contexts:
@@ -526,7 +526,7 @@ contexts:
       pop: true
     - match: 'func'
       scope: keyword.declaration.function.fgd
-      push: expect_string
+      push: [maybe_resblock_tags, expect_string]
     - match: 'entity'
       scope: keyword.declaration.class.fgd
       push: [maybe_resblock_tags, expect_classref]
