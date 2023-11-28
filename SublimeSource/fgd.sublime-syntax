@@ -66,11 +66,24 @@ contexts:
     - match: '[+-]?([0-9]*[.])?[0-9]+'
       scope: constant.numeric.float
 
+  inc_snippet:
+    - match: '(#)(?i:(snippet))'
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.snippet
+        2: keyword.other.fgd.snippet
+      push: expect_snippetref
+
   expect_openblock:
     - match: \[
       scope: punctuation.section.block.begin.fgd
       pop: true
     - include: inc_comments
+    - include: inc_all_invalid
+
+  expect_equals:
+    - match: \=
+      scope: keyword.operator.assignment.fgd.snippet
+      pop: true
     - include: inc_all_invalid
 
   # Next should be a string.
@@ -98,6 +111,24 @@ contexts:
           pop: true
     - match: '{{identifier}}'
       scope: variable.function.fgd.classref
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fgd
+      pop: true
+    - include: inc_all_invalid
+
+  # Next is a possibly quoted snippet name.
+  expect_snippetref:
+    - match: '"'
+      scope: punctuation.definition.string.begin.fgd
+      set:
+        - include: inc_string_body
+        - meta_scope: variable.function.fgd.snippet
+        - match: '"'
+          scope: punctuation.definition.string.end.fgd
+          pop: true
+    - match: '{{identifier}}'
+      scope: variable.function.fgd.snippet
       pop: true
     - match: \n
       scope: invalid.illegal.fgd
@@ -222,6 +253,18 @@ contexts:
         - include: inc_comments
         - include: inc_all_invalid
 
+    # Snippet definition.
+    - match: (?i:(@)(snippet))
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.exclude
+      push:
+        - match: (?i:desc(ription)?)
+          scope: keyword.other.fgd.snippet
+          set: [expect_string, expect_equals, expect_snippet_def]
+        - match: (?i:choices|flags|spawnflags)
+          scope: keyword.other.fgd.snippet
+          set: [keyvalue-choices, expect_openblock, expect_equals, expect_snippet_def]
 
     - match: '@'
       scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
@@ -285,7 +328,6 @@ contexts:
     - include: inc_string
     - match: '{{identifier}}'
       scope: string.unquoted.fgd
-
 
   entity-name:
     - meta_scope: meta.class.fgd
@@ -409,6 +451,7 @@ contexts:
 
     - include: inc_float
     - include: inc_string
+    - include: inc_snippet
     - match: ':'
       scope: punctuation.separator.fgd.keyvalue-sep
     - match: '\n'
@@ -418,20 +461,28 @@ contexts:
       set:
         - match: \[
           scope: punctuation.section.block.begin.fgd.choices
-          set:
-            # Choices body.
-            - include: inc_comments
-            - include: inc_float
-            - include: inc_string
-            - match: ':'
-              scope: punctuation.separator.fgd.choices
-            - match: \[
-              scope: punctuation.section.brackets.begin.fgd
-              push: unified_tags_brack
-            - match: \]
-              scope: punctuation.section.block.end.fgd.choices
-              pop: true
+          set: keyvalue-choices
+        - match: '(#)(?i:(snippet))'
+          captures:
+            1: punctuation.definition.keyword.fgd keyword.other.fgd.snippet
+            2: keyword.other.fgd.snippet
+          set: expect_snippetref
         - include: inc_all_invalid
+
+  keyvalue-choices:
+    # Choices body.
+    - include: inc_comments
+    - include: inc_float
+    - include: inc_string
+    - include: inc_snippet
+    - match: ':'
+      scope: punctuation.separator.fgd.choices
+    - match: \[
+      scope: punctuation.section.brackets.begin.fgd
+      push: unified_tags_brack
+    - match: \]
+      scope: punctuation.section.block.end.fgd.choices
+      pop: true
 
   auto-visgroup-header:
     # We MUST have = "name" next.
@@ -469,6 +520,24 @@ contexts:
     - match: \]
       scope: punctuation.section.block.end.fgd.autovisgroup
       pop: true
+
+  # A snippet name, in the @snippet definition.
+  expect_snippet_def:
+    - match: '"'
+      scope: punctuation.definition.string.begin.fgd
+      set:
+        - include: inc_string_body
+        - meta_scope: variable.other.constant.fgd.snippet entity.name.constant.fgd.snippet
+        - match: '"'
+          scope: punctuation.definition.string.end.fgd
+          pop: true
+    - match: '{{identifier}}'
+      scope: variable.other.constant.fgd.snippet entity.name.constant.fgd.snippet
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fgd
+      pop: true
+    - include: inc_all_invalid
 
   s2-group:
     # Match something like [group="Blah blah", report, readonly]
