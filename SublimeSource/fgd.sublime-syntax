@@ -6,7 +6,7 @@ scope: source.valve.fgd
 
 variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
-  helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox)
+  helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|catapult|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox|worldtext)
   helpertypes_no_arg: (?i:halfgridsnap)
 
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'

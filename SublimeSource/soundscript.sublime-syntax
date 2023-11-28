@@ -9,7 +9,7 @@ variables:
   # sndlvl_90dB etc.
   soundlevel: SNDLVL_(NONE|IDLE|STATIC|TALKING|GUNFIRE|((20|25|30|35|40|45|50|55|65|70|80|85|90|95|100|105|110|120|125|130|140|145|150|180)dB))
   # Special characters allowed at the start of a string
-  chars: '[~`!@#$%^&*()?<+>{}]'
+  chars: '[]\[~`!@#$%^&*()?<+>{}]'
 
 contexts:
   inc_comments:
