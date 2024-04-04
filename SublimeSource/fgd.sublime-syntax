@@ -265,6 +265,9 @@ contexts:
         - match: (?i:choices|flags|spawnflags)
           scope: keyword.other.fgd.snippet
           set: [keyvalue-choices, expect_openblock, expect_equals, expect_snippet_def]
+        - match: (?i:kv|keyvalue|input|output)
+          scope: keyword.other.fgd.snippet
+          set: [expect_keyvalue_io, expect_equals, expect_snippet_def]
 
     - match: '@'
       scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
@@ -362,12 +365,18 @@ contexts:
 
     - match: (input|output)
       scope: storage.type.fgd.io
-      push: io_name
+      push: expect_keyvalue_io
     - match: (?i:(@)(resources))
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.exclude
       push: [src_resourceblock, expect_openblock]
+
+    - match: '(#)(?i:(snippet))'
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.snippet
+        2: keyword.other.fgd.snippet
+      push: [expect_snippetref, expect_snippet_kvio_type]
 
     - match: '@'
       scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
@@ -382,7 +391,9 @@ contexts:
       scope: punctuation.section.block.end.fgd.entity
       pop: true
 
-  io_name:
+  expect_keyvalue_io:
+    # Expect a name(type)...
+    # Useful for both keyvalues and IO.
     # Can't use this twice in a row.
     - match: (input|output)
       scope: invalid.illegal.fgd
@@ -391,8 +402,15 @@ contexts:
       set: keyvalue_pre_type
     - include: inc_all_invalid
 
+  expect_snippet_kvio_type:
+    - match: (input|output|keyvalue)
+      scope: storage.type.fgd
+      pop: true
+    - include: inc_all_invalid
+
+
   keyvalue_pre_type:
-    # After the idenfier, so either (type) or [tags](type)
+    # After the identifier, so either (type) or [tags](type)
     - match: \(
       scope: punctuation.section.parens.begin.fgd
       set: keyvalue_type
