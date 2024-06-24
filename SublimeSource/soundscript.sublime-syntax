@@ -8,6 +8,7 @@ variables:
   channels: CHAN_(AUTO|WEAPON|VOICE|VOICE2|ITEM|BODY|STREAM|REPLACE|STATIC|VOICE_BASE|USER_BASE[0-9]+)
   # sndlvl_90dB etc.
   soundlevel: SNDLVL_(NONE|IDLE|STATIC|TALKING|GUNFIRE|((20|25|30|35|40|45|50|55|65|70|80|85|90|95|100|105|110|120|125|130|140|145|150|180)dB))
+  pitch: PITCH_(LOW|NORM|HIGH)
   # Special characters allowed at the start of a string
   chars: '[]\[~`!@#$%^&*()?<+>{}]'
 
@@ -27,6 +28,13 @@ contexts:
       scope: constant.numeric.float
       captures:
         2: punctuation.separator.decimal
+
+  inc_float_pop:
+    - match: '[+-]?\b([0-9]*([.]))?[0-9]+\b%?'
+      scope: constant.numeric.float
+      captures:
+        2: punctuation.separator.decimal
+      pop: true
 
 
   # Basic block, allows nesting and pops when done.
@@ -106,7 +114,7 @@ contexts:
       scope: punctuation.definition.string.end.keyvalues string.quoted.double
       set: start-brace
     - match: '}'
-      scope: invalid.illegal.stray-bracr
+      scope: invalid.illegal.stray-brace
 
   unquoted-name:
     - meta_scope: entity.name.class.soundscript.scriptname meta.path
@@ -164,6 +172,14 @@ contexts:
         3: punctuation.definition.string.end
       push: opt-volume
 
+    - match: '("?)(pitch)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.operator.word
+        3: punctuation.definition.string.end
+      push: opt-pitch
+
     - match: '("?)(soundentry_version)(\1)?'
       scope: string.quoted.double
       captures:
@@ -182,7 +198,7 @@ contexts:
         # Either a single wav, or a block of them.
         - include: inc_comments
         - match: '{'
-          scope: punctuation.section.braces.begin
+          scope: punctuation.section.block.begin.keyvalues
           set: # A block of random ones.
             - match: '("?)(?i:(wave|rndwave))(\1)?'
               scope: string.quoted.double
@@ -192,7 +208,7 @@ contexts:
                 3: punctuation.definition.string.end
               push: opt-wavfile
             - match: '}'
-              scope: punctuation.section.braces.end
+              scope: punctuation.section.block.end.keyvalues
               pop: true
         - match: '}'
           scope: invalid.illegal.stray-brace
@@ -236,7 +252,18 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.begin string.quoted.double
       set: opt-channel-quoted
-    - include: opt-channel-quoted
+    - match: '{{channels}}'
+      scope: support.constant.soundscript
+      pop: true
+    - include: inc_float_pop
+    - match: '[A-Za-z0-9_]+' # For when typing partial constants.
+      scope: string.other
+      pop: true
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
 
   opt-channel-quoted:
     - meta_scope: meta.soundscript.channel
@@ -262,7 +289,18 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.begin string.quoted.double
       set: opt-soundlevel-quoted
-    - include: opt-soundlevel-quoted
+    - match: '{{soundlevel}}'
+      scope: support.constant.soundscript
+      pop: true
+    - include: inc_float_pop
+    - match: '[A-Za-z0-9_]+'
+      scope: string.other
+      pop: true
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
 
   opt-soundlevel-quoted:
     - meta_scope: meta.soundscript.soundlevel
@@ -289,9 +327,57 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.begin string.quoted.double
       set: opt-volume-quoted
-    - include: opt-volume-quoted
+    - include: inc_float_pop
+    - match: VOL_NORM
+      scope: support.constant.soundscript
+      pop: true
+    - match: '[A-Za-z0-9_]+'
+      scope: string.other
+      pop: true
+    - match: ','
+      scope: invalid.illegal.no-sep
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
 
   opt-volume-quoted:
+    - match: '"'
+      scope: punctuation.definition.string.end string.quoted.double
+      pop: true
+    - include: inc_float
+    - match: VOL_NORM
+      scope: support.constant.soundscript
+    - match: '[A-Za-z0-9_]'
+      scope: string.other
+    - match: ','
+      scope: punctuation.separator.sequence
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
+
+  # Only one constant value here.
+  opt-pitch:
+    - include: inc_comments
+    - match: '\n'
+      scope: invalid.illegal.no-value
+      pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin string.quoted.double
+      set: opt-pitch-quoted
+    - include: inc_float_pop
+    - match: '{{pitch}}'
+      scope: support.constant.soundscript
+      pop: true
+    - match: '[A-Za-z0-9_]+'
+      scope: string.other
+      pop: true
+    - match: ','
+      scope: invalid.illegal.no-sep
+    - match: '//'
+      scope: invalid.illegal.no-comment
+      pop: true
+
+  opt-pitch-quoted:
     - match: '"'
       scope: punctuation.definition.string.end string.quoted.double
       pop: true
