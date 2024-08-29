@@ -1,0 +1,164 @@
+%YAML 1.2
+---
+name: Subtitles
+# file_extensions: [txt]
+scope: source.valve.keyvalues.subtitles
+
+variables:
+  float: '[+-]?([0-9]*[.])?[0-9]+'
+  identifier: '[A-Za-z\_\.0-9]+'
+
+contexts:
+  inc_comments:
+    - match: //
+      scope: punctuation.definition.comment.begin.subtitles comment.line.double-slash
+      push: comment
+  comment:
+    - meta_scope: comment.line.double-slash.subtitles
+    - match: \)
+      scope: comment.line.double-slash.subtitles
+    # Lookahead, so whatever actual syntax still matches the newline.
+    - match: '(?=\n)'
+      pop: true
+
+  inc_string:
+    - match: \"
+      scope: punctuation.definition.string.begin.subtitles string.quoted.double
+      push: string
+
+  inc_string_body:
+    - meta_include_prototype: false
+    - match: \\.
+      scope: constant.character.escape.subtitles
+
+  inc_all_invalid:
+    # Non-whitespace is invalid at this scope.
+    - match: '\S\.*'
+      scope: invalid.illegal.keyvalues.stray-char
+
+  string:
+    - include: inc_string_body
+    - meta_scope: string.quoted.double.subtitles
+    - match: '"'
+      scope: punctuation.definition.string.end.subtitles
+      pop: true 
+
+  expect_string:
+    - match: \"
+      scope: punctuation.definition.string.begin.subtitles string.quoted.double
+      set: string
+    - include: inc_all_invalid
+
+  main:
+    - include: inc_comments
+
+    - match: '("?)((?i:lang))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: keyword.declaration.subtitles.root
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double 
+      push: 
+        - match: \{
+          scope: meta.block punctuation.section.block.begin
+          set: expect_lang_tokens
+        - include: inc_all_invalid
+
+    - include: inc_all_invalid
+
+  expect_lang_tokens:
+    # Outer body, allowing language + tokens blocks
+    - include: inc_comments
+
+    - match: '("?)((?i:language))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: keyword.declaration.subtitles.tokens
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push: expect_string
+
+    - match: '("?)((?i:tokens))(\1)'
+      captures:
+        1: punctuation.definition.string.begin.soundscape.rule string.quoted.double
+        2: keyword.declaration.subtitles.tokens
+        3: punctuation.definition.string.end.soundscape.rule string.quoted.double
+      push:
+        - match: \{
+          scope: meta.block punctuation.section.block.begin
+          set: tokens
+        - include: inc_all_invalid
+
+    - include: inc_all_invalid
+
+  tokens:
+    # Main block, with each token.
+    - include: inc_comments
+
+    - match: \"
+      scope: punctuation.definition.string.begin.subtitles string.quoted.double
+      push:
+        - include: inc_string_body
+        - meta_scope: string.quoted.double.subtitles
+        - match: '\.'
+          scope: punctuation.separator.sequence.name
+        - match: '"'
+          scope: punctuation.definition.string.end.subtitles
+          set: token_value
+
+    - match: '({{identifier}})'
+      captures:
+        1: entity.name.subtitles
+      push: token_value
+
+  inc_token_value:
+    - match: '(<)(i|I)(>)'
+      scope: meta.tag
+      captures:
+        1: punctuation.definition.tag.begin
+        2: markup.italic keyword.other.subtitles
+        3: punctuation.definition.tag.end
+    - match: '(<)(b|B)(>)'
+      scope: meta.tag
+      captures:
+        1: punctuation.definition.tag.begin
+        2: markup.bold keyword.other.subtitles
+        3: punctuation.definition.tag.end
+    - match: '(<)(?i:(sfx|cr))(>)?'
+      scope: meta.tag
+      captures:
+        1: punctuation.definition.tag.begin
+        2: markup.bold keyword.other.subtitles
+        3: punctuation.definition.tag.end
+    - match: '(<)(?:((?i:clr|playerclr|norepeat|len|delay))(:)?)?'
+      scope: meta.tag
+      captures:
+        1: punctuation.definition.tag.begin
+        2: markup.other.subtitles keyword.other.subtitles
+        3: punctuation.definition.annotation
+      push:
+        - meta_scope: meta.tag
+        - match: '[0-9]+'
+          scope: constant.numeric.value
+        - match: ',|:'
+          scope: punctuation.separator.sequence
+        - match: '>'
+          scope: punctuation.definition.tag.end
+          pop: true
+        - include: inc_all_invalid
+
+  token_value:
+    - meta_scope: string.quoted.double.subtitles
+    - include: inc_token_value
+    - include: inc_comments
+    - match: \"
+      scope: punctuation.definition.string.begin.subtitles string.quoted.double
+      set:
+        - meta_scope: string.quoted.double.subtitles
+        - include: inc_token_value
+        - include: string
+
+    - match: '\n'
+      pop: true
+    - match: '\s+'
+      scope: string.unquoted.subtitles
+
+
