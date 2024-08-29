@@ -56,18 +56,42 @@ contexts:
         2: keyword.control.import
         3: punctuation.definition.string.end
 
-    - match: '("?)(?i:(update_stack|start_stack|stop_stack))(\1)?'
+    - match: '("?)(?i:(update_stack|start_stack|stop_stack))(\1)'
       scope: string.quoted.double
       captures:
         1: punctuation.definition.string.begin
         2: keyword.control.conditional.case
         3: punctuation.definition.string.end
 
+    - match: '("?)(?i:(operator))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: keyword.declaration.function.soundscript
+        3: punctuation.definition.string.end
+
+    - match: '("?)(?i:(true|false))(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: constant.language.boolean.soundscript
+        3: punctuation.definition.string.end
+
+    - match: '("?)(@)(?i:([^.]*))(\.)?([a-zA-Z0-9_]+)(\1)?'
+      scope: string.quoted.double
+      captures:
+        1: punctuation.definition.string.begin
+        2: punctuation.definition.variable.begin.soundscript.operator-out
+        3: variable.function.soundscript.operator
+        4: punctuation.separator.key-value.soundscript.output
+        5: constant.language.soundscript.output
+        6: punctuation.definition.string.end
+
     - match: '"'
       scope: punctuation.definition.string.begin.keyvalues
       push: string
 
-    - match: '[^\[\]"{}/]+'
+    - match: '[^\[\]"{}/\s]+'
       scope: string.unquoted.keyvalues
 
   string:
@@ -224,7 +248,7 @@ contexts:
       push:
         - include: inc_comments
         - match: '{'
-          scope: punctuation.section.braces.begin
+          scope: punctuation.section.block.begin.keyvalues
           set: block
         - match: '\S'
           scope: invalid.illegal
