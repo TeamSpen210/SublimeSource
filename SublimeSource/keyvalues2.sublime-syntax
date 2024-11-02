@@ -6,7 +6,7 @@ scope: source.valve.keyvalues2
 
 variables: 
   bool_values: '(?i:1|0|yes|no|true|false|y|n|t|f)'
-  float: '([+-])?[0-9]*([.])?[0-9]+'
+  float: '([+-])?[0-9]*([.])?[0-9]+(?:(E)([+-])?([0-9]+))?'
 
 contexts:
   inc_comments:
@@ -65,6 +65,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       pop: true
     - match: '(?=\S)'
       scope: invalid.illegal.non-digit
@@ -343,6 +345,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       push: array_value_end
     - include: inc_array_value
 
@@ -354,6 +358,8 @@ contexts:
     - include: inc_array_value
 
   array_string:
+    - match: \\.
+      scope: constant.character.escape.keyvalues2
     - match: '"'
       scope: punctuation.definition.string.end.keyvalues2 string.quoted.double
       push: [array_body, array_comma]
@@ -379,6 +385,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float2b
     - include: inc_array_value
 
@@ -388,6 +396,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: [array_float2a, array_value_end]
     - match: '(?=\S)'
       set: [array_float2a, array_body]
@@ -400,6 +410,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float3b
     - include: inc_array_value
 
@@ -409,6 +421,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float3c
     - match: '(?=\S)'
       set: [array_float3a, array_body]
@@ -420,6 +434,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: [array_float3a, array_value_end]
     - match: '(?=\S)'
       set: [array_float3a, array_body]
@@ -432,6 +448,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float4b
     - include: inc_array_value
 
@@ -441,6 +459,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float4c
     - match: '(?=\S)'
       set: [array_float4a, array_body]
@@ -452,6 +472,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_float4d
     - match: '(?=\S)'
       set: [array_float4a, array_body]
@@ -463,6 +485,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: [array_float4a, array_value_end]
     - match: '(?=\S)'
       set: [array_float4a, array_body]
@@ -475,6 +499,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_b
     - include: inc_array_value
 
@@ -484,6 +510,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_c
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -495,6 +523,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_d
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -506,6 +536,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_e
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -517,6 +549,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_f
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -528,6 +562,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_g
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -539,6 +575,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_h
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -550,6 +588,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: array_matrix_i
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
@@ -561,6 +601,8 @@ contexts:
       captures:
         1: keyword.operator.arithmetic
         2: punctuation.separator.decimal
+        3: punctuation.separator.decimal
+        4: keyword.operator.arithmetic
       set: [array_matrix_a, array_value_end]
     - match: '(?=\S)'
       set: [array_matrix_a, array_body]
