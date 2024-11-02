@@ -6,6 +6,8 @@ scope: source.valve.keyvalues.vmt
 
 variables:
   float: '[+-]?([0-9]*[.])?[0-9]+'
+  builtin_tex: '(?i:white|black|error|grey(?:alphazero)?|normalize(?:signed)?|_rt_camera|_rt_waterref(?:le|ra)ction|_rt_poweroftwofb|_rt_depthdoubler|_rt_portalwaterref(?:le|ra)ction_depth[12]|_rt_fullscreen|_rt_fullframedepth|_rt_fullframefb|_rt_smallhdr[01]_rt_smallfb[01])(?![a-za-z0-9/\\_])'
+  unknown_rt: '(?i:_rt_[a-z0-9_]+)(?![a-za-z0-9/\\_])'
   proxy_props: '(?i:animatedtextureframenumvar|animatedtextureframerate|toggletextureframenumvar|onlyanimateontexture|animatedtexturevar|textureframenumvar|texturescrollangle|texturescrollrate|texturescrollvar|toggleshouldwrap|toggletexturevar|pupilcloserate|pupilopenrate|initialvalue|lessequalvar|translatevar|greatervar|sineperiod|texturevar|timeoffset|centervar|halfwidth|resultvar|rotatevar|scalevar|axisvar|easeout|sinemax|sinemin|srcvar1|srcvar2|convar|easein|maxval|minval|offset|angle|scale|start|mean|rate|team|end|max|min)'
   proxy_names: '(?i:customsteamimageonmodel|animatespecifictexture|materialmodifyanimated|animatedentitytexture|animatedoffsettexture|nightvisionselfillum|selectfirstifnonzero|animatedweaponsheen|buildingrescuelevel|ep1introvortrefract|particlesphereproxy|stickybombglowcolor|lightedfloorbutton|sniperriflecharge|breakablesurface|entityoriginalyx|playerdamagetime|portalopenamount|survivalteammate|texturetransform|animatedtexture|communityweapon|playerproximity|playerteammatch|aliensurfacefx|building_invis|conveyorscroll|materialmodify|modelglowcolor|playerhealtime|playerposition|wheatlyeyeglow|fizzlervortex|fleshinterior|gaussiannoise|itemtintcolor|shieldfalloff|stattrakdigit|stattrakillum|texturescroll|toggletexture|entityorigin|entityrandom|lightedmouth|matrixrotate|playerhealth|portalstatic|stattrakicon|uniformnoise|vortemissive|weapon_invis|bloodyhands|currenttime|entityspeed|exponential|invulnlevel|lessorequal|playerscore|playerspeed|shadowmodel|teamtexture|tractorbeam|yellowlevel|linearramp|playerlogo|playerteam|playerview|weaponskin|wrapminmax|burnlevel|heartbeat|heliblade|spy_invis|taucharge|worlddims|bbqlevel|lampbeam|lamphalo|multiply|subtract|vm_invis|waterlod|divide|equals|health|shadow|shield|alpha|clamp|cycle|dummy|empty|invis|isnpc|pupil|camo|frac|sine|abs|add|int|it)'
 
@@ -120,10 +122,10 @@ contexts:
 
     - match: '"'
       scope: punctuation.definition.string.begin.vmt-value
-      set: quoted-value
+      set: [quoted-value, known-mat]
     - match: '\$'
       scope: punctuation.definition.keyword
-      set: unquoted-value
+      set: [unquoted-value, known-mat]
     - match: '[-/]'
       scope: punctuation.separator.sequence.file
     - match: '[a-zA-Z_0-9]+'
@@ -132,6 +134,19 @@ contexts:
     # then include anything after that (so text is also illegal).
     - match: '\S.*'
       scope: invalid.illegal.vmt.must-be-quoted
+
+  # Detect special textures, if they're the only thing in a value.
+  # This gets popped if we detect anything else.
+  known-mat:
+    - match: '{{builtin_tex}}'
+      scope: variable.language.vmt
+      pop: true
+    - match: '{{unknown_rt}}'
+      # _rt_something, but not known.
+      scope: variable.other.member.vmt
+      pop: true
+    - match: '(?=.)'  # Lookahead.
+      pop: true
 
   unquoted-value:
     - meta_scope: string.unquoted.vmt-value meta.string.vmt-value
@@ -162,7 +177,7 @@ contexts:
     - match: '\w'
       scope: invalid.illegal.stray-char
 
-  # [ 0 0 0 ] value. 1-3 for vectors, 16 for a matrix.
+  # [ 0 0 0 ] value. 1-4 for vectors, 16 for a matrix.
   vector-value-brack:
     - match: '{{float}}'
       scope: constant.numeric.float
