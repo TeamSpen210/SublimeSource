@@ -229,6 +229,13 @@ contexts:
         2: keyword.other.fgd.entity
       push: entity-header
 
+    # Assume any @somethingClass is an unknown entity definition.
+    - match: (?i:(@)[a-z]+class\b)
+      captures:
+        1: punctuation.definition.keyword.fgd support.class.fgd.entity
+      scope: support.class.fgd.entity
+      push: entity-header
+
     - match: (?i:(@)(autovisgroup))
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
