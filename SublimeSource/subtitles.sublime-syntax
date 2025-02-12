@@ -62,6 +62,13 @@ contexts:
           set: expect_lang_tokens
         - include: inc_all_invalid
 
+    - match: \}
+      scope: meta.block punctuation.section.block.end
+      # Only comments are valid now.
+      set:
+        - include: inc_comments
+        - include: inc_all_invalid
+
     - include: inc_all_invalid
 
   expect_lang_tokens:
@@ -85,6 +92,9 @@ contexts:
           scope: meta.block punctuation.section.block.begin
           set: tokens
         - include: inc_all_invalid
+    - match: \}
+      scope: meta.block punctuation.section.block.end
+      pop: true
 
     - include: inc_all_invalid
 
@@ -114,6 +124,11 @@ contexts:
     - match: \"
       scope: punctuation.definition.string.begin.subtitles string.quoted.double
       push: token_name_quoted
+
+    - match: \}
+      scope: meta.block punctuation.section.block.end
+      # This does allow another language/tokens KV, probably fine?
+      pop: true
 
     - match: '(?=[A-Za-z\_])'  # Lookahead
       push:
