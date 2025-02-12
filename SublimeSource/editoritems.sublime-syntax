@@ -60,7 +60,8 @@ contexts:
 
     # instancelocs names. We set so we can escape
     # if the string unexpectedly ends.
-    - match: <
+    # Use a lookahead so we don't match  < or <= by themselves.
+    - match: '<(?=[A-Za-z0-9])'
       scope: punctuation.section.mapping.begin.editoritems.instancelocs
       set: ilocs-item_id
 
