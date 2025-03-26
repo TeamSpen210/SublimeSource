@@ -8,6 +8,7 @@ variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
   helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|catapult|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox|worldtext)
   helpertypes_no_arg: (?i:halfgridsnap)
+  helpertypes_s2_kv: (?i:metadata)
 
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
 
@@ -75,6 +76,13 @@ contexts:
 
   expect_openblock:
     - match: \[
+      scope: punctuation.section.block.begin.fgd
+      pop: true
+    - include: inc_comments
+    - include: inc_all_invalid
+
+  expect_openbrace:
+    - match: \{
       scope: punctuation.section.block.begin.fgd
       pop: true
     - include: inc_comments
@@ -223,7 +231,7 @@ contexts:
             - match: .
               scope: meta.filepath.relative
 
-    - match: (?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass)\b)
+    - match: (?i:(@)(baseclass|solidclass|npcclass|pointclass|filterclass|keyframeclass|moveclass|overrideclass)\b)
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
         2: keyword.other.fgd.entity
@@ -246,7 +254,7 @@ contexts:
     - match: (?i:(@)(materialexclusion))
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
-        2: keyword.other.fgd.exclude
+        2: keyword.other.fgd.material_exclude
       push:
         - match: \[
           scope: punctuation.section.block.begin.fgd
@@ -264,7 +272,7 @@ contexts:
     - match: (?i:(@)(snippet))
       captures:
         1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
-        2: keyword.other.fgd.exclude
+        2: keyword.other.fgd.snippet
       push:
         - match: (?i:desc(ription)?)
           scope: keyword.other.fgd.snippet
@@ -275,6 +283,19 @@ contexts:
         - match: (?i:kv|keyvalue|input|output)
           scope: keyword.other.fgd.snippet
           set: [expect_keyvalue_io, expect_equals, expect_snippet_def]
+
+    # S2, disables entity
+    - match: (?i:(@)(exclude))
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.exclude
+      push: expect_classref
+
+    - match: (?i:(@)(entitygroup))
+      captures:
+        1: punctuation.definition.keyword.fgd keyword.other.fgd.entity
+        2: keyword.other.fgd.entity_group
+      push: [s2-entitygroup, expect_string]
 
     - match: '@'
       scope: punctuation.definition.keyword.fgd meta.fgd.keyword_start
@@ -317,6 +338,10 @@ contexts:
       push: helper-args
     - match: '{{helpertypes_no_arg}}\s'
       scope: support.type.fgd.helper
+
+    - match: '{{helpertypes_s2_kv}}'
+      scope: support.type.fgd.helper
+      push: [s2-kvbrace, expect_openbrace]
     # Unknown helper.
     - match: '({{identifier}})\s*(\()'
       captures:
@@ -414,7 +439,6 @@ contexts:
       scope: storage.type.fgd
       pop: true
     - include: inc_all_invalid
-
 
   keyvalue_pre_type:
     # After the identifier, so either (type) or [tags](type)
@@ -563,6 +587,22 @@ contexts:
       scope: invalid.illegal.fgd
       pop: true
     - include: inc_all_invalid
+
+  s2-entitygroup:
+    - match: '{'
+      scope: punctuation.section.braces.begin.fgd.kvblock
+      set: s2-kvbrace
+    - match: '\n'
+      pop: true
+
+  s2-kvbrace:
+    # Match { key = "value" ... }
+    - match: '[a-zA-Z0-9_]+'
+      push: [expect_string, expect_equals]
+
+    - match: '}'
+      scope: punctuation.section.braces.end.fgd.kvblock
+      pop: true
 
   s2-group:
     # Match something like [group="Blah blah", report, readonly]
