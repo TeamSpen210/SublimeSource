@@ -6,6 +6,7 @@ scope: source.valve.fgd
 
 variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
+  kvtypes_s2: (?i:remove_key|modelstatechoices|curve|parentattachment|materialgroup|bodygroupchoices|sequence|localaxis|lod_level|node_id_list|surface_properties|world_point)
   helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|catapult|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox|worldtext)
   helpertypes_no_arg: (?i:halfgridsnap)
   helpertypes_s2_kv: (?i:metadata)
@@ -14,7 +15,7 @@ variables:
 
   kvkeywords_no_arg: (?i:readonly|report|important)
   kvkeywords_arg: (?i:group)
-  restypes: (?i:model|texture|material)
+  restypes: (?i:model|texture|material|particle)
   srctools_filetypes: (?i:break_chunk|choreo|entity|file|mat|material|mdl|model|particle|scene|snd|sound|tex|texture|vscript_squirrel)
 
 
@@ -385,6 +386,10 @@ contexts:
                   set: entity-body
                 - include: inc_comments
                 - include: inc_all_invalid
+        # hlvr.fgd includes ent_name: [, flag as invalid but allow
+        - match: '\['
+          scope: invalid.illegal.fgd
+          set: entity-body
         - include: inc_all_invalid
     - match: \[
       scope: punctuation.section.block.begin.fgd.entity
@@ -395,7 +400,7 @@ contexts:
     - meta_scope: meta.class.fgd meta.block.fgd.entity
     - include: inc_comments
 
-    - match: (input|output)
+    - match: (input|output)\s
       scope: storage.type.fgd.io
       push: expect_keyvalue_io
     - match: (?i:(@)(resources))
@@ -461,7 +466,7 @@ contexts:
 
   keyvalue_type:
     # Inside type parens.
-    - match: \s*({{kvtypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*({{kvtypes}}|{{kvtypes_s2}})\s*(\))(\s*{{kvkeywords_no_arg}})*
       captures:
         1: support.type.fgd.type
         2: punctuation.section.parens.end.fgd
@@ -469,7 +474,7 @@ contexts:
       set: keyvalue
 
     # Source2 - resource:type values.
-    - match: \s*(resource)(:)({{restypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*(resource(?:_choices)?)(:)({{restypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
       captures:
         1: keyword.fgd
         2: punctuation.separator.fgd
@@ -598,6 +603,7 @@ contexts:
   s2-kvbrace:
     # Match { key = "value" ... }
     - match: '[a-zA-Z0-9_]+'
+      scope: variable.annotation.fgd
       push: [expect_string, expect_equals]
 
     - match: '}'
