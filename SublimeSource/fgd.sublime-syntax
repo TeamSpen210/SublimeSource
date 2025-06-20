@@ -13,7 +13,8 @@ variables:
 
   identifier: '[A-Za-z\_][A-Za-z\_\.0-9]*'
 
-  kvkeywords_no_arg: (?i:readonly|report|important)
+  # Readonly/report are S1, important/group are s2, editor is srctools
+  kvkeywords_no_arg: (?i:readonly|report|important|editor)
   kvkeywords_arg: (?i:group)
   restypes: (?i:model|texture|material|particle)
   srctools_filetypes: (?i:break_chunk|choreo|entity|file|mat|material|mdl|model|particle|scene|snd|sound|tex|texture|vscript_squirrel)
@@ -482,31 +483,39 @@ contexts:
 
   keyvalue_type:
     # Inside type parens.
-    - match: \s*(\*)?({{kvtypes}}|{{kvtypes_s2}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*(\*)?({{kvtypes}}|{{kvtypes_s2}})\s*(\))
       captures:
         1: storage.modifier.fgd.kvalue_report
         2: support.type.fgd.type
         3: punctuation.section.parens.end.fgd
-        4: keyword.control.fgd.kvalue_type
-      set: keyvalue
+      set: keyvalue-keywords
 
     # Source2 - resource:type values.
-    - match: \s*(resource(?:_choices)?)(:)({{restypes}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*(resource(?:_choices)?)(:)({{restypes}})\s*(\))
       captures:
         1: keyword.fgd
         2: punctuation.separator.fgd
         3: support.type.fgd.type
         4: punctuation.section.parens.end.fgd
-        5: keyword.control.fgd.kvalue_type
-      set: keyvalue
+      set: keyvalue-keywords
     # Unknown type - that bit is bad, but everything else is fine.
-    - match: \s*([a-zA-Z0-9:_]+)\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*([a-zA-Z0-9:_]+)\s*(\))
       captures:
         1: invalid.illegal.unknown
         2: punctuation.section.parens.end.fgd
-        3: keyword.control.fgd.kvalue_type
-      set: keyvalue
+      set: keyvalue-keywords
     - include: inc_all_invalid
+
+  # between name(type) and :, multiple keywords allowed.
+  keyvalue-keywords:
+    - match: '{{kvkeywords_no_arg}}'
+      scope: keyword.control.fgd.kvalue_type
+    - match: ':'
+      scope: punctuation.separator.fgd.keyvalue-sep
+      set: keyvalue
+    - match: '\n'
+      pop: true
+
 
   # Keyvalue body, parameters.
   keyvalue:
