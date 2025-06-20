@@ -7,7 +7,7 @@ scope: source.valve.fgd
 variables:
   kvtypes: (?i:angle|angle_negative_pitch|axis|bool|boolean|choices|color1|color255|decal|filterclass|flags|float|instance_file|instance_parm|instance_variable|int|integer|material|node_dest|node_id|npcclass|origin|particlesystem|pointentityclass|scene|scriptlist|script|sidelist|sound|sprite|string|studio|target_destination|target_name_or_class|target_source|vecline|vector|void|ehandle|text_block|local_point)
   kvtypes_s2: (?i:remove_key|modelstatechoices|curve|parentattachment|materialgroup|bodygroupchoices|sequence|localaxis|lod_level|node_id_list|surface_properties|world_point)
-  helpertypes_arg: (?i:animator|aliasof|autovis|bbox|color|catapult|cylinder|decal|frustum|iconsprite|instance|keyframe|light|lightcone|lightprop|line|overlay|overlay_transition|quadbounds|sidelist|size|sphere|sprite|studio|studioprop|wirebox|worldtext)
+  helpertypes_arg: (?i:animator|aliasof|autovis|axis|color|catapult|cylinder|decal|frustum|iconsprite|instance|keyframe|lightcone|lightprop|light|line|obb|orderby|origin|overlay_transition|overlay|quadbounds|sidelist|size|sphere|sprite|studioprop|studio|sweptplayerhull|vecline|wirebox|worldtext)
   helpertypes_no_arg: (?i:halfgridsnap)
   helpertypes_s2_kv: (?i:metadata)
 
@@ -332,11 +332,10 @@ contexts:
         2: punctuation.section.parens.begin.fgd.helper
       push: unified_tags_paren
 
-    - match: '({{helpertypes_arg}})(\()'
-      captures:
-        1: support.type.fgd.helper
-        2: punctuation.section.parens.begin.fgd.helper
-      push: helper-args
+    - match: '{{helpertypes_arg}}'
+      scope: support.type.fgd.helper
+      push: helper-pre-args
+
     - match: '{{helpertypes_no_arg}}\s'
       scope: support.type.fgd.helper
 
@@ -344,19 +343,36 @@ contexts:
       scope: support.type.fgd.helper
       push: [s2-kvbrace, expect_openbrace]
     # Unknown helper.
-    - match: '({{identifier}})\s*(\()'
-      captures:
-        1: variable.function.fgd.helper
-        2: punctuation.section.parens.begin.fgd.helper
-      push: helper-args
+    - match: '{{identifier}}\s*'
+      scope: variable.function.fgd.helper
+      push: helper-pre-args
     - match: '{{identifier}}\b'
       scope: variable.function.fgd.helper
+
+  helper-pre-args:
+    # After the identifier, so either (args) or [tags](args)
+    - match: \(
+      scope: punctuation.section.parens.begin.fgd.helper
+      set: helper-args
+    - match: \[
+      scope: punctuation.section.brackets.begin.fgd
+      set:
+        - helper-args
+        - helper-open-parens
+        - unified_tags_brack
+    - include: inc_all_invalid
+
+  helper-open-parens:
+    - match: \(
+      scope: punctuation.section.parens.begin.fgd.helper
+      pop: true
+    - include: inc_all_invalid
 
   helper-args:
     - meta_scope: meta.class.fgd
     - include: inc_comments
     - match: '\)'
-      scope: punctuation.section.parens.begin.fgd.helper
+      scope: punctuation.section.parens.end.fgd.helper
       pop: true
     - match: ','
       scope: punctuation.separator.sequence.fgd
@@ -466,11 +482,12 @@ contexts:
 
   keyvalue_type:
     # Inside type parens.
-    - match: \s*({{kvtypes}}|{{kvtypes_s2}})\s*(\))(\s*{{kvkeywords_no_arg}})*
+    - match: \s*(\*)?({{kvtypes}}|{{kvtypes_s2}})\s*(\))(\s*{{kvkeywords_no_arg}})*
       captures:
-        1: support.type.fgd.type
-        2: punctuation.section.parens.end.fgd
-        3: keyword.control.fgd.kvalue_type
+        1: storage.modifier.fgd.kvalue_report
+        2: support.type.fgd.type
+        3: punctuation.section.parens.end.fgd
+        4: keyword.control.fgd.kvalue_type
       set: keyvalue
 
     # Source2 - resource:type values.
